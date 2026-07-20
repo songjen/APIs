@@ -19,7 +19,7 @@ import pandas as pd
 app = FastAPI(title="API-KG Q&A Backend v2")
 app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
 
-GRAPH_ROOT = r"C:\Users\sino\Documents\graphrag_project"
+GRAPH_ROOT = r"C:\Users\sino\Documents\graphrag_kg"
 KG_FILES = {
     "cephalosporin": {"entities": 43, "relationships": 64, "apis": 25},
     "carbapenem_v2": {"entities": 46, "relationships": 63, "apis": 8},
@@ -70,8 +70,7 @@ def query_graphrag(req: QueryRequest):
     try:
         result = subprocess.run(
             ["python", "-m", "graphrag", "query",
-             "--method", req.method, "--query", req.question,
-             "--output", "json"],
+             "--method", req.method, req.question],
             capture_output=True, text=True, timeout=180,
             cwd=GRAPH_ROOT
         )
@@ -108,7 +107,7 @@ async def query_stream(req: QueryRequest):
         try:
             proc = await asyncio.create_subprocess_exec(
                 "python", "-m", "graphrag", "query",
-                "--method", req.method, "--query", req.question,
+                "--method", req.method, req.question,
                 stdout=asyncio.subprocess.PIPE,
                 stderr=asyncio.subprocess.PIPE,
                 cwd=GRAPH_ROOT
