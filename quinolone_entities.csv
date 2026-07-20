@@ -1,0 +1,36 @@
+﻿id,title,type,description,human_readable_id,text_unit_ids,degree,frequency
+KSM_N_Methylpiperazine,N-Methylpiperazine,KSM,chinese:N-甲基哌嗪; cas:109-01-3; formula:C5H12N2; mw:100.16; conversion:—; desc:左氧氟沙星/氧氟沙星C7位侧链引入试剂，喹诺酮关键哌嗪砌块,KSM_N_Methylpiperazine,,0,1
+KSM_Piperazine,Piperazine,KSM,chinese:哌嗪; cas:110-85-0; formula:C4H10N2; mw:86.14; conversion:—; desc:环丙沙星/诺氟沙星C7位侧链引入试剂，喹诺酮通用哌嗪砌块,KSM_Piperazine,,0,1
+KSM_Trifluoro_Benzene,"2,3,4-Trifluoro-nitrobenzene",KSM,"chinese:2,3,4-三氟硝基苯; cas:771-69-7; formula:C6H2F3NO2; mw:177.08; conversion:—; desc:氟喹诺酮通用起始原料，经还原→环合构建喹诺酮母核",KSM_Trifluoro_Benzene,,0,1
+KSM_Methoxy_Acrylate,Methoxy Acrylate Derivative,KSM,chinese:甲氧基丙烯酸酯衍生物; cas:—; formula:—; mw:—; conversion:—; desc:莫西沙星C8位甲氧基引入侧链砌块,KSM_Methoxy_Acrylate,,0,1
+DI_Levofloxacin_Q_Acid,Levofloxacin Q Acid,DI,chinese:左旋氧氟沙星羧酸(Q酸); cas:100986-89-8; formula:C13H9F2NO4; mw:281.21; conversion:—; desc:左氧氟沙星关键中间体，三环母核含羧基，与N-甲基哌嗪缩合得左氧氟沙星,DI_Levofloxacin_Q_Acid,,0,1
+DI_Cyclopropyl_Acid,Cyclopropyl Carboxylic Acid,DI,"chinese:环丙羧酸; cas:86393-33-1; formula:C13H9F2NO3; mw:265.21; conversion:—; desc:环丙沙星关键中间体，1-环丙基-6-氟-7-氯-1,4-二氢-4-氧代喹啉-3-羧酸",DI_Cyclopropyl_Acid,,0,1
+DI_Norfloxacin_Q_Acid,Norfloxacin Q Acid,DI,chinese:诺氟沙星羧酸; cas:70458-92-5; formula:C13H9FNO3; mw:246.21; conversion:—; desc:诺氟沙星中间体，1-乙基-6-氟-7-氯喹诺酮羧酸,DI_Norfloxacin_Q_Acid,,0,1
+DI_Moxifloxacin_Core,Moxifloxacin Core,DI,"chinese:莫西沙星母核; cas:—; formula:—; mw:—; conversion:—; desc:莫西沙星C8-甲氧基喹诺酮母核，经(S,S)-二氮杂双环侧链偶联",DI_Moxifloxacin_Core,,0,1
+DI_Ofloxacin_Core,Ofloxacin Core,DI,chinese:氧氟沙星母核; cas:82419-35-0; formula:C13H9FNO4; mw:262.21; conversion:—; desc:氧氟沙星消旋中间体，手性拆分得左氧氟沙星Q酸,DI_Ofloxacin_Core,,0,1
+API_Levofloxacin,Levofloxacin,API,chinese:左氧氟沙星; cas:100986-85-4; formula:C18H20FN3O4; mw:361.37; conversion:~84%; gen:3; year:1993; desc:Q酸+N-甲基哌嗪缩合，收率~84%，C7哌嗪基+C8-H; certification:FDA DMF(京新/大地/浙江朗华); EDQM CEP,API_Levofloxacin,,0,1
+API_Ciprofloxacin,Ciprofloxacin,API,chinese:环丙沙星; cas:85721-33-1; formula:C17H18FN3O3; mw:331.34; conversion:~84%; gen:2; year:1987; desc:环丙羧酸+哌嗪缩合，收率~84%，C1-环丙基; certification:FDA DMF(京新/国邦/浙江朗华); EDQM CEP(多家),API_Ciprofloxacin,,0,1
+API_Norfloxacin,Norfloxacin,API,chinese:诺氟沙星; cas:70458-96-7; formula:C16H18FN3O3; mw:319.33; conversion:; gen:2; year:1983; desc:首个氟喹诺酮，C1-乙基，C7-哌嗪基; certification:FDA; EDQM; NMPA,API_Norfloxacin,,0,1
+API_Ofloxacin,Ofloxacin,API,chinese:氧氟沙星; cas:82419-36-1; formula:C18H20FN3O4; mw:361.37; conversion:; gen:2; year:1985; desc:消旋体，左氧氟沙星为活性S-异构体; certification:FDA; EDQM; NMPA,API_Ofloxacin,,0,1
+API_Moxifloxacin,Moxifloxacin,API,chinese:莫西沙星; cas:151096-09-2; formula:C21H24FN3O4; mw:401.43; conversion:; gen:4; year:1999; desc:第4代呼吸喹诺酮，C8-甲氧基+C7-二氮杂双环侧链; certification:FDA(Bayer); EDQM CEP(浙江医药/多家),API_Moxifloxacin,,0,1
+API_Gatifloxacin,Gatifloxacin,API,chinese:加替沙星; cas:112811-59-3; formula:C19H22FN3O4; mw:375.39; conversion:; gen:4; year:1999; desc:第4代，C8-甲氧基+C7-哌嗪基，曾因低血糖风险退市; certification:FDA; PMDA(日本),API_Gatifloxacin,,0,1
+API_Nalidixic_Acid,Nalidixic Acid,API,chinese:萘啶酸; cas:389-08-2; formula:C12H12N2O3; mw:232.24; conversion:; gen:1; year:1962; desc:首个喹诺酮(第1代)，仅用于泌尿道感染; certification:FDA(已淘汰),API_Nalidixic_Acid,,0,1
+SUP_InnerMongolia_Paiside,内蒙古派思德精细化工,Supplier,chinese:内蒙古派思德; capacity:Q酸 750t; status:主要产能; cert:—; desc:Q酸最大供应商，750t/年产能,SUP_InnerMongolia_Paiside,,0,1
+SUP_InnerMongolia_Fangzhong,内蒙古方中新材料科技,Supplier,chinese:内蒙古方中新; capacity:Q酸 500t; status:主要产能; cert:—; desc:Q酸第2大供应商,SUP_InnerMongolia_Fangzhong,,0,1
+SUP_Shanghai_Jingxin,上海京新医药,Supplier,chinese:京新药业(上海); capacity:Q酸 400t; status:主要产能; cert:—; desc:Q酸上游，京新药业旗下,SUP_Shanghai_Jingxin,,0,1
+SUP_Jiangxi_Shanchuang,江西善创药业,Supplier,chinese:江西善创; capacity:Q酸 300t; status:主要产能; cert:—,SUP_Jiangxi_Shanchuang,,0,1
+SUP_Anhui_Beika,安徽北卡药业,Supplier,chinese:安徽北卡; capacity:Q酸 250t; status:主要产能; cert:—,SUP_Anhui_Beika,,0,1
+SUP_Zhejiang_Jingxin,浙江京新药业,Supplier,chinese:浙江京新药业; capacity:左氧 1800t; status:主要产能; cert:FDA DMF / EDQM CEP; desc:左氧氟沙星全球龙头，Q酸→API→制剂一体化，绍兴新昌,SUP_Zhejiang_Jingxin,,0,1
+SUP_Jiangxi_Dadi,江西大地制药,Supplier,chinese:江西大地制药; capacity:左氧 1600t; status:主要产能; cert:—; desc:左氧第2大供应商,SUP_Jiangxi_Dadi,,0,1
+SUP_Anhui_Jiesheng,安徽皆省生物科技,Supplier,chinese:安徽皆省; capacity:左氧 1000t; status:主要产能; cert:—,SUP_Anhui_Jiesheng,,0,1
+SUP_InnerMongolia_Anzhou,内蒙古安洲药业,Supplier,chinese:内蒙古安洲; capacity:左氧 500t / 环丙 500t; status:主要产能; cert:—,SUP_InnerMongolia_Anzhou,,0,1
+SUP_Zhejiang_HuiHai,浙江翚海制药,Supplier,chinese:浙江翚海; capacity:左氧 200t; status:主要产能; cert:—,SUP_Zhejiang_HuiHai,,0,1
+SUP_Jiangxi_Hongbang,江西弘邦化工,Supplier,chinese:江西弘邦化工; capacity:左氧 200t; status:主要产能; cert:—,SUP_Jiangxi_Hongbang,,0,1
+SUP_Zhejiang_Langhua,浙江朗华制药,Supplier,chinese:浙江朗华; capacity:左氧 100t / 环丙 800t; status:主要产能; cert:FDA DMF; desc:左氧+环丙双产品线，台州,SUP_Zhejiang_Langhua,,0,1
+SUP_Henan_Aoda,河南奥达制药,Supplier,chinese:河南奥达; capacity:左氧 100t / 环丙 100t; status:主要产能; cert:—,SUP_Henan_Aoda,,0,1
+SUP_Zhejiang_Guobang,浙江国邦药业,Supplier,chinese:国邦医药; capacity:环丙羧酸 5000t; status:主要产能; cert:FDA DMF / EDQM CEP; desc:环丙羧酸全球龙头5000t，环丙沙星API→制剂一体化,SUP_Zhejiang_Guobang,,0,1
+SUP_Shandong_Jingxin,山东京新药业,Supplier,chinese:京新药业(山东); capacity:环丙羧酸 4000t; status:主要产能; cert:—; desc:环丙羧酸第2大，京新山东基地,SUP_Shandong_Jingxin,,0,1
+SUP_Hebei_Chaorun,河北超润润生物科技,Supplier,chinese:河北超润润; capacity:环丙羧酸 1200t / 环丙 150t; status:主要产能; cert:—,SUP_Hebei_Chaorun,,0,1
+SUP_Jiangsu_Shagang,江苏沙钢焦化,Supplier,chinese:江苏沙钢; capacity:环丙沙星 2500t; status:主要产能; cert:—; desc:环丙沙星最大供应商2500t,SUP_Jiangsu_Shagang,,0,1
+SUP_Shanxi_Boda,山西博达制药,Supplier,chinese:山西博达; capacity:环丙沙星 1020t; status:主要产能; cert:—,SUP_Shanxi_Boda,,0,1
+SUP_Taizhou_Waishang,台州外商联驱通药业,Supplier,chinese:台州外商; capacity:环丙沙星 600t; status:主要产能; cert:—,SUP_Taizhou_Waishang,,0,1

@@ -1,0 +1,37 @@
+﻿source,target,id,description,weight,human_readable_id,text_unit_ids,combined_degree
+DRUG_Imipenem,GEN_CBP_1,REL_0000,relationship:BELONGS_TO_GENERATION; generation:1,1.0,REL_0000,,2
+DRUG_Panipenem,GEN_CBP_1,REL_0001,relationship:BELONGS_TO_GENERATION; generation:1,1.0,REL_0001,,2
+DRUG_Meropenem,GEN_CBP_2,REL_0002,relationship:BELONGS_TO_GENERATION; generation:2,1.0,REL_0002,,2
+DRUG_Biapenem,GEN_CBP_2,REL_0003,relationship:BELONGS_TO_GENERATION; generation:2,1.0,REL_0003,,2
+DRUG_Ertapenem,GEN_CBP_3,REL_0004,relationship:BELONGS_TO_GENERATION; generation:3,1.0,REL_0004,,2
+DRUG_Doripenem,GEN_CBP_3,REL_0005,relationship:BELONGS_TO_GENERATION; generation:3,1.0,REL_0005,,2
+DRUG_Tebipenem,GEN_CBP_3,REL_0006,relationship:BELONGS_TO_GENERATION; generation:3,1.0,REL_0006,,2
+INT_L-Threonine,INT_Epoxybutanoic_Acid,REL_0007,"relationship:DIAZOTIZATION; description:L-Thr+NaNO2/HCl(-5℃)→重氮化→NaOH关环氧环→(2R,3R)-环氧丁酸",1.0,REL_0007,,2
+INT_Epoxybutanoic_Acid,INT_Epoxy_Amide,REL_0008,relationship:ALDOL_REDUCTION; description:环氧丁酸+对甲氧苯胺基乙酸乙酯→缩合→环氧丁酰胺Int-C,1.0,REL_0008,,2
+INT_Epoxy_Amide,INT_BetaLactam_IntD,REL_0009,relationship:BETA_LACTAM_CYCLIZATION; description:Int-C+HMDS/LiNH2→β-内酰胺关环→中间体D(四元环),1.0,REL_0009,,2
+INT_BetaLactam_IntD,INT_TBS_IntD,REL_0010,relationship:PROTECTION; description:Int-D→TBSCl/Et3N保护→水解→Baeyer-Villiger氧化→O3脱PMP,1.0,REL_0010,,2
+INT_TBS_IntD,INT_4-AA,REL_0011,relationship:OXIDATION; description:TBS-Int-D→过氧乙酸Baeyer-Villiger氧化→O3脱PMP→4-AA(总收率~34.5%),1.0,REL_0011,,2
+INT_Methyl_Acetoacetate,INT_MAA_Benzamide,REL_0012,relationship:ALDOL_REDUCTION; description:苯甲酰胺+HCHO→羟甲基化→SOCl2氯代→S1/S2(路线B),1.0,REL_0012,,2
+INT_MAA_Benzamide,INT_MAA_Condensate,REL_0013,relationship:ALDOL_REDUCTION; description:S2+乙酰乙酸甲酯+NaOMe→Claisen缩合→S3,1.0,REL_0013,,2
+INT_MAA_Condensate,INT_MAA_Reduced,REL_0014,"relationship:ENZYME_REDUCTION; description:S3+还原酶(pH6.9,40-50℃,18-22h)→手性醇S4",1.0,REL_0014,,2
+INT_MAA_Reduced,INT_4-AA,REL_0015,relationship:OXIDATION; description:S4→TBS保护→乙醇胺→Grignard侧链→过氧乙酸(微反应器)→4-AA(新绿色工艺),1.0,REL_0015,,2
+INT_4-AA,INT_pNB-4-AA,REL_0016,relationship:PROTECTION; description:4-AA+pNB-Br/K2CO3→C3羧基PNB酯保护,1.0,REL_0016,,2
+INT_pNB-4-AA,INT_4-BMA,REL_0017,relationship:ALDOL_REDUCTION; description:pNB-4-AA→C3酰化→羟醛缩合→手性还原→TBS→4-BMA,1.0,REL_0017,,2
+INT_4-BMA,INT_Enol_Phosphate,REL_0018,relationship:ENOLIZATION; description:4-BMA+LDA/-78℃→烯醇化+ClP(O)(OPh)2→C4烯醇磷酸酯,1.0,REL_0018,,2
+INT_Enol_Phosphate,INT_1bMethyl-EnolP,REL_0019,relationship:METHYLATION; description:EnolP+MeI/MeMgBr→C4 1β-甲基化(DHP-I稳定性关键),1.0,REL_0019,,2
+INT_1bMethyl-EnolP,INT_MAP,REL_0020,relationship:RH_CYCLIZATION; description:1β-Methyl-EnolP→C4取代→重氮转移→Rh2(OAc)4催化N-H插入→MAP母核,1.0,REL_0020,,2
+INT_MAP,DRUG_Meropenem,REL_0021,relationship:SIDE_CHAIN_COUPLING; description:MAP母核+吡咯烷硫基C2侧链→脱PNB→美罗培南,1.0,REL_0021,,2
+INT_MAP,DRUG_Biapenem,REL_0022,relationship:SIDE_CHAIN_COUPLING; description:MAP母核+三唑鎓C2侧链→脱保护→比阿培南,1.0,REL_0022,,2
+INT_MAP,DRUG_Doripenem,REL_0023,relationship:SIDE_CHAIN_COUPLING; description:MAP母核+氨磺酰吡咯烷C2侧链→脱保护→多尼培南,1.0,REL_0023,,2
+INT_MAP,DRUG_Tebipenem,REL_0024,relationship:SIDE_CHAIN_COUPLING; description:MAP母核+噻唑烷C2侧链→脱保护→Pivoxil酯化→替比培南酯,1.0,REL_0024,,2
+SCA_Pivoxil,DRUG_Tebipenem,REL_0025,relationship:SIDE_CHAIN_OF; description:Pivoxil酯化→口服前药,1.0,REL_0025,,2
+INT_Thienamycin,DRUG_Imipenem,REL_0026,relationship:N_FORMIMIDOYLATION; description:硫霉素+formimidoyl chloride→N-甲酰亚胺化→亚胺培南,1.0,REL_0026,,2
+INT_Cilastatin,DRUG_Imipenem,REL_0027,relationship:COMBINATION; description:西司他丁+亚胺培南→1:1复方(Tienam/Primaxin),1.0,REL_0027,,2
+INT_4-AA,DRUG_Panipenem,REL_0028,relationship:SIDE_CHAIN_COUPLING; description:4-AA→C2乙酰亚胺吡咯烷侧链→帕尼培南,1.0,REL_0028,,2
+INT_4-AA,DRUG_Ertapenem,REL_0029,relationship:SIDE_CHAIN_COUPLING; description:4-AA→C2间羧基苯甲酰胺侧链→环化→厄他培南(高蛋白结合→长效),1.0,REL_0029,,2
+INT_Ertapenem_Sidechain,DRUG_Ertapenem,REL_0030,relationship:SIDE_CHAIN_OF; description:间羧基苯甲酰胺侧链→T1/2≈4h QD,1.0,REL_0030,,2
+SCA_PNB_sidechain,DRUG_Meropenem,REL_0031,relationship:SIDE_CHAIN_OF; description:氨乙基硫C2侧链,1.0,REL_0031,,2
+SCA_PNB_sidechain,DRUG_Biapenem,REL_0032,relationship:SIDE_CHAIN_OF; description:氨乙基硫C2侧链,1.0,REL_0032,,2
+SCA_PNB_sidechain,DRUG_Doripenem,REL_0033,relationship:SIDE_CHAIN_OF; description:氨乙基硫C2侧链,1.0,REL_0033,,2
+GEN_CBP_1,GEN_CBP_2,REL_0034,relationship:EVOLVED_TO; description:第2代在DHP-I稳定性/抗菌谱/PK特性上迭代升级,1.0,REL_0034,,2
+GEN_CBP_2,GEN_CBP_3,REL_0035,relationship:EVOLVED_TO; description:第3代在DHP-I稳定性/抗菌谱/PK特性上迭代升级,1.0,REL_0035,,2

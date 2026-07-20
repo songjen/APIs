@@ -1,0 +1,39 @@
+﻿source,target,id,description,weight,human_readable_id,text_unit_ids,combined_degree
+KSM_DCNB,DI_CF_Aniline,REL_0000,relationship:PRODUCES; conv:~75%; method:FLUORINATION; desc:DCNB→KF/DMSO氟化→铁粉还原,1.0,REL_0000,,2
+DI_CF_Aniline,DI_Q_Ester,REL_0001,relationship:PRODUCES; conv:~60%; method:CYCLIZATION; desc:C-F苯胺+原甲酸三乙酯+丙二酸二乙酯→缩合→环合,1.0,REL_0001,,2
+DI_Q_Ester,DI_Nor_Q_Acid,REL_0002,relationship:PRODUCES; conv:~60%; method:ETHYLATION; desc:乙基化→水解→诺氟沙星羧酸,1.0,REL_0002,,2
+DI_Q_Ester,DI_Cipro_Acid,REL_0003,relationship:PRODUCES; conv:~60%; method:CYCLOPROPYLATION; desc:环丙胺引入→环丙羧酸,1.0,REL_0003,,2
+DI_Q_Ester,DI_Oflo_Core,REL_0004,relationship:PRODUCES; conv:~55%; method:CYCLIZATION; desc:氧氟沙星三环母核构建,1.0,REL_0004,,2
+DI_Q_Ester,DI_Moxi_Core,REL_0005,relationship:PRODUCES; conv:~50%; method:METHOXYLATION; desc:C8-甲氧基引入,1.0,REL_0005,,2
+DI_Q_Ester,DI_Gati_Core,REL_0006,relationship:PRODUCES; conv:~50%; method:METHOXYLATION; desc:C8-甲氧基+哌嗪,1.0,REL_0006,,2
+DI_Nor_Q_Acid,API_Norfloxacin,REL_0007,relationship:PRODUCES; conv:~65%; method:PIPERAZINE_COND; desc:诺氟沙星羧酸+哌嗪→C7取代,1.0,REL_0007,,2
+DI_Cipro_Acid,API_Ciprofloxacin,REL_0008,relationship:PRODUCES; conv:~84%; method:PIPERAZINE_COND; desc:环丙羧酸+哌嗪→C7取代,1.0,REL_0008,,2
+DI_Oflo_Core,API_Ofloxacin,REL_0009,relationship:PRODUCES; conv:~65%; method:CONDENSATION; desc:氧氟沙星母核+N-甲基哌嗪,1.0,REL_0009,,2
+DI_Oflo_Core,DI_Levo_Q_Acid,REL_0010,relationship:PRODUCES; conv:~40%; method:CHIRAL_RESOLUTION; desc:消旋体→手性拆分→左旋Q酸,1.0,REL_0010,,2
+DI_Levo_Q_Acid,API_Levofloxacin,REL_0011,relationship:PRODUCES; conv:~84%; method:METHYL_PIP_COND; desc:Q酸+N-甲基哌嗪→C7缩合,1.0,REL_0011,,2
+DI_Moxi_Core,API_Moxifloxacin,REL_0012,"relationship:PRODUCES; conv:—; method:DIAZABICYCLO; desc:母核+(S,S)-二氮杂双环",1.0,REL_0012,,2
+DI_Gati_Core,API_Gatifloxacin,REL_0013,relationship:PRODUCES; conv:—; method:PIPERAZINE_COND; desc:母核+哌嗪,1.0,REL_0013,,2
+KSM_NMePip,API_Levofloxacin,REL_0014,relationship:PRODUCES; conv:~84%; method:SIDE_CHAIN; desc:N-甲基哌嗪C7引入,1.0,REL_0014,,2
+KSM_Piperazine,API_Ciprofloxacin,REL_0015,relationship:PRODUCES; conv:~84%; method:SIDE_CHAIN; desc:哌嗪C7引入,1.0,REL_0015,,2
+KSM_Cyclopropylamine,DI_Cipro_Acid,REL_0016,relationship:PRODUCES; conv:—; method:SIDE_CHAIN; desc:环丙胺N1引入,1.0,REL_0016,,2
+SUP_Paiside,DI_Levo_Q_Acid,REL_0017,relationship:SUPPLIES; desc:Q酸 750t,1.0,REL_0017,,2
+SUP_Fangzhong,DI_Levo_Q_Acid,REL_0018,relationship:SUPPLIES; desc:Q酸 500t,1.0,REL_0018,,2
+SUP_SH_Jingxin,DI_Levo_Q_Acid,REL_0019,relationship:SUPPLIES; desc:Q酸 400t,1.0,REL_0019,,2
+SUP_JX_Shanchuang,DI_Levo_Q_Acid,REL_0020,relationship:SUPPLIES; desc:Q酸 300t,1.0,REL_0020,,2
+SUP_AH_Beika,DI_Levo_Q_Acid,REL_0021,relationship:SUPPLIES; desc:Q酸 250t,1.0,REL_0021,,2
+SUP_ZJ_Jingxin,API_Levofloxacin,REL_0022,relationship:SUPPLIES; desc:左氧 1800t,1.0,REL_0022,,2
+SUP_JX_Dadi,API_Levofloxacin,REL_0023,relationship:SUPPLIES; desc:左氧 1600t,1.0,REL_0023,,2
+SUP_AH_Jiesheng,API_Levofloxacin,REL_0024,relationship:SUPPLIES; desc:左氧 1000t,1.0,REL_0024,,2
+SUP_NM_Anzhou,API_Levofloxacin,REL_0025,relationship:SUPPLIES; desc:左氧 500t,1.0,REL_0025,,2
+SUP_ZJ_Langhua,API_Levofloxacin,REL_0026,relationship:SUPPLIES; desc:左氧 100t,1.0,REL_0026,,2
+SUP_HN_Aoda,API_Levofloxacin,REL_0027,relationship:SUPPLIES; desc:左氧 100t,1.0,REL_0027,,2
+SUP_ZJ_Guobang,DI_Cipro_Acid,REL_0028,relationship:SUPPLIES; desc:环丙羧酸 5000t,1.0,REL_0028,,2
+SUP_SD_Jingxin,DI_Cipro_Acid,REL_0029,relationship:SUPPLIES; desc:环丙羧酸 4000t,1.0,REL_0029,,2
+SUP_HB_Chaorun,DI_Cipro_Acid,REL_0030,relationship:SUPPLIES; desc:环丙羧酸 1200t,1.0,REL_0030,,2
+SUP_JS_Shagang,API_Ciprofloxacin,REL_0031,relationship:SUPPLIES; desc:环丙沙星 2500t,1.0,REL_0031,,2
+SUP_ZJ_Jingxin_C,API_Ciprofloxacin,REL_0032,relationship:SUPPLIES; desc:环丙沙星 1100t,1.0,REL_0032,,2
+SUP_SX_Boda,API_Ciprofloxacin,REL_0033,relationship:SUPPLIES; desc:环丙沙星 1020t,1.0,REL_0033,,2
+SUP_ZJ_Langhua,API_Ciprofloxacin,REL_0034,relationship:SUPPLIES; desc:环丙沙星 800t,1.0,REL_0034,,2
+SUP_NM_Anzhou,API_Ciprofloxacin,REL_0035,relationship:SUPPLIES; desc:环丙沙星 500t,1.0,REL_0035,,2
+SUP_HB_Chaorun,API_Ciprofloxacin,REL_0036,relationship:SUPPLIES; desc:环丙沙星 150t,1.0,REL_0036,,2
+SUP_HN_Aoda,API_Ciprofloxacin,REL_0037,relationship:SUPPLIES; desc:环丙沙星 100t,1.0,REL_0037,,2

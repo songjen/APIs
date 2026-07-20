@@ -1,0 +1,31 @@
+﻿id,title,type,description,human_readable_id,text_unit_ids,degree,frequency
+GEN_CBP_1,1st Gen - Natural Derived,Generation,"generation:1; subtype:天然衍生; year_range:1985-1993; key_features:硫霉素衍生,需联用DHP-I抑制剂,抗G+/G-/厌氧菌谱宽",GEN_CBP_1,,0,1
+GEN_CBP_2,2nd Gen - 1β-Methyl Enhanced,Generation,"generation:2; subtype:1β-甲基增强; year_range:1996-2001; key_features:C1位1β-甲基增强DHP-I稳定性,无需联用酶抑制剂,抗G-增强",GEN_CBP_2,,0,1
+GEN_CBP_3,3rd Gen - Long-Acting / Oral,Generation,"generation:3; subtype:长效/口服; year_range:2002-至今; key_features:半衰期延长QD给药,口服前药突破,抗ESBL/MDR",GEN_CBP_3,,0,1
+INT_L-Threonine,L-Threonine,Starting Material,"chinese:L-苏氨酸; cas:72-19-5; role:4-AA手性起始原料(路线A/国内主流); formula:C4H9NO3; mw:119.12; desc:发酵法大宗氨基酸,富祥/九州/海翔主流路线,8步总收率~34.5%,纯度99.34%",INT_L-Threonine,,0,1
+INT_Methyl_Acetoacetate,Methyl Acetoacetate,Starting Material,"chinese:乙酰乙酸甲酯; cas:105-45-3; role:4-AA起始原料(路线B/绿色新工艺); formula:C5H8O3; mw:116.12; desc:CN113173947A专利,微通道反应器,危废减半,避免叠氮/环氧化物",INT_Methyl_Acetoacetate,,0,1
+INT_Epoxybutanoic_Acid,Epoxybutanoic Acid,Core Intermediate,"chinese:(2R,3R)-2,3-环氧丁酸; role:L-Thr路线中间体A; desc:L-Thr+NaNO2/HCl(-5℃)重氮化→NaOH关环氧环→中间体A,收率74.5%",INT_Epoxybutanoic_Acid,,0,1
+INT_Epoxy_Amide,Epoxy Butanamide (Int-C),Core Intermediate,"chinese:环氧丁酰胺缩合物(中间体C); role:L-Thr路线中间体C; desc:环氧丁酸+对甲氧苯胺基乙酸乙酯(Int-B)→缩合→中间体C,收率94.3%",INT_Epoxy_Amide,,0,1
+INT_BetaLactam_IntD,β-Lactam Int-D,Core Intermediate,"chinese:β-内酰胺环中间体D; role:L-Thr路线关环产物; desc:Int-C+HMDS/LiNH2→β-内酰胺关环→中间体D(四元环),收率72.1%",INT_BetaLactam_IntD,,0,1
+INT_TBS_IntD,TBS-Protected Int-D,Core Intermediate,chinese:TBS保护→4-AA; role:L-Thr路线最后步骤; desc:Int-D→TBSCl保护→水解→Baeyer-Villiger氧化→O3脱PMP→4-AA,INT_TBS_IntD,,0,1
+INT_MAA_Benzamide,MAA-Benzamide Adduct,Core Intermediate,chinese:苯甲酰胺-甲醛缩合物(S1/S2); role:MAA路线中间体S1→S2; desc:苯甲酰胺+HCHO→羟甲基化→SOCl2氯代→S1/S2,INT_MAA_Benzamide,,0,1
+INT_MAA_Condensate,MAA Condensate (S3),Core Intermediate,chinese:乙酰乙酸甲酯缩合物(S3); role:MAA路线缩合中间体; desc:S2+乙酰乙酸甲酯+NaOMe→Claisen缩合→S3,INT_MAA_Condensate,,0,1
+INT_MAA_Reduced,MAA Reduced (S4),Core Intermediate,"chinese:酶还原中间体(S4); role:MAA路线酶催化产物; desc:S3+还原酶(pH6.9,40-50℃,18-22h)→手性醇S4",INT_MAA_Reduced,,0,1
+INT_4-AA,4-AA,Core Intermediate,chinese:4-乙酰氧基氮杂环丁酮; cas:28562-53-0; role:培南通用核心中间体(路线A/B汇合); formula:C13H25NO4Si; mw:287.43; desc:两条产业化路线汇合产物。A路线收率34.5%/8步；B路线微反应器绿色工艺,INT_4-AA,,0,1
+INT_pNB-4-AA,pNB-4-AA,Core Intermediate,chinese:对硝基苄基保护4-AA; role:C3羧基PNB酯保护; desc:4-AA C3羧基+pNB-Br/K2CO3→PNB酯化保护,INT_pNB-4-AA,,0,1
+INT_4-BMA,4-BMA,Core Intermediate,chinese:4-BMA中间体; role:C3侧链完成中间体; desc:pNB-4-AA C3酰化→羟醛缩合→手性还原→TBS→4-BMA,INT_4-BMA,,0,1
+INT_Enol_Phosphate,Enol Phosphate,Core Intermediate,chinese:C4烯醇磷酸酯; role:C4活化中间体; desc:4-BMA+LDA/-78℃→烯醇化+ClP(O)(OPh)2→C4烯醇磷酸酯,INT_Enol_Phosphate,,0,1
+INT_1bMethyl-EnolP,1β-Methyl-EnolP,Core Intermediate,"chinese:1β-甲基烯醇磷酸酯; role:1β-甲基化关键中间体; desc:EnolP+MeI/MeMgBr→C4 1β-甲基化(DHP-I稳定性关键,2/3代特征)",INT_1bMethyl-EnolP,,0,1
+INT_MAP,MAP母核,Core Intermediate,chinese:双环碳青霉烯MAP母核; role:双环培南骨架; desc:1β-Methyl-EnolP→C4取代→重氮转移→Rh2(OAc)4催化N-H插入→MAP母核,INT_MAP,,0,1
+INT_Thienamycin,Thienamycin,Core Intermediate,"chinese:硫霉素; cas:59995-64-1; role:天然碳青霉烯; formula:C11H16N2O4S; mw:272.32; desc:S.cattleya发酵产物,第一个天然碳青霉烯,亚胺培南前体",INT_Thienamycin,,0,1
+INT_Cilastatin,Cilastatin,Core Intermediate,"chinese:西司他丁; cas:82009-34-5; role:DHP-I酶抑制剂; formula:C16H26N2O5S; mw:358.45; desc:肾脱氢肽酶I抑制剂,与亚胺培南1:1联用(Tienam/Primaxin)",INT_Cilastatin,,0,1
+INT_Ertapenem_Sidechain,Ertapenem C2 Sidechain,Core Intermediate,chinese:厄他培南C2侧链酸; role:厄他培南长半衰期侧链; desc:间羧基苯甲酰胺C2侧链→高蛋白结合率→T1/2≈4h→QD给药,INT_Ertapenem_Sidechain,,0,1
+SCA_PNB_sidechain,PNB Sidechain,Side Chain / Reagent,"chinese:氨乙基硫C2侧链; role:C2位侧链引入试剂; used_in:['Imipenem', 'Panipenem', 'Meropenem', 'Biapenem', 'Doripenem']; desc:4-AA母核C2位亲核取代引入含硫/氨基侧链,决定抗菌谱差异",SCA_PNB_sidechain,,0,1
+SCA_Pivoxil,Pivoxil,Side Chain / Reagent,chinese:特戊酰氧甲基(前药基团); role:口服前药酯化试剂; used_in:['Tebipenem Pivoxil']; desc:C3羧酸Pivoxil酯化→口服吸收→酯酶水解释放活性培南,SCA_Pivoxil,,0,1
+DRUG_Imipenem,Imipenem,Drug,"chinese:亚胺培南; year:1985; cas:74431-23-5; formula:C12H17N3O4S; mw:299.35; cid:47317; desc:首个培南(Tienam),与西司他丁1:1联用,thienamycin N-甲酰亚胺衍生物; source:Thienamycin→N-formimidoyl化→亚胺培南",DRUG_Imipenem,,0,1
+DRUG_Panipenem,Panipenem,Drug,"chinese:帕尼培南; year:1993; cas:87726-17-8; formula:C15H21N3O4S; mw:339.41; cid:636412; desc:日本三共(Carbenin),与倍他米隆联用,C2乙酰亚胺吡咯烷侧链; source:4-AA→C2侧链引入→帕尼培南",DRUG_Panipenem,,0,1
+DRUG_Meropenem,Meropenem,Drug,"chinese:美罗培南; year:1996; cas:96036-03-2; formula:C17H25N3O5S; mw:383.46; cid:441130; desc:最广泛使用的培南(Meronem),1β-甲基+吡咯烷C2侧链,抗G-最强; source:MAP母核+C2吡咯烷硫基侧链→美罗培南",DRUG_Meropenem,,0,1
+DRUG_Biapenem,Biapenem,Drug,"chinese:比阿培南; year:2001; cas:120410-24-4; formula:C15H18N4O4S; mw:350.39; cid:71352; desc:1β-甲基培南(Omegacin),C2双环三唑鎓侧链,DHP-I高度稳定; source:MAP母核+C2三唑鎓侧链→比阿培南",DRUG_Biapenem,,0,1
+DRUG_Ertapenem,Ertapenem,Drug,"chinese:厄他培南; year:2002; cas:153832-46-3; formula:C22H25N3O7S; mw:475.51; cid:150610; desc:长效培南(Invanz),T1/2≈4h QD给药,苯甲酸C2侧链高蛋白结合; source:4-AA+C2间羧基苯甲酰胺侧链→厄他培南",DRUG_Ertapenem,,0,1
+DRUG_Doripenem,Doripenem,Drug,"chinese:多尼培南; year:2005; cas:148016-81-3; formula:C15H24N4O6S2; mw:420.50; cid:73303; desc:1β-甲基培南(Doribax),C2氨磺酰吡咯烷侧链,抗铜绿假单胞菌; source:MAP母核+C2氨磺酰侧链→多尼培南",DRUG_Doripenem,,0,1
+DRUG_Tebipenem,Tebipenem Pivoxil,Drug,"chinese:替比培南酯; year:2009; cas:161715-21-5; formula:C22H31N3O7S2; mw:513.63; cid:9910614; desc:首个口服培南前药(Orapenem,日本),Pivoxil酯提高口服利用度; source:MAP母核+C2噻唑烷侧链→Pivoxil酯化→替比培南酯",DRUG_Tebipenem,,0,1

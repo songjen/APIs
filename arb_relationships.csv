@@ -1,0 +1,29 @@
+﻿source,target,id,description,weight,human_readable_id,text_unit_ids,combined_degree
+DRUG_Losartan,GEN_ARB_1,REL_0000,relationship: BELONGS_TO_GENERATION; generation: 1,1.0,REL_0000,,2
+DRUG_Valsartan,GEN_ARB_2,REL_0001,relationship: BELONGS_TO_GENERATION; generation: 2,1.0,REL_0001,,2
+DRUG_Irbesartan,GEN_ARB_2,REL_0002,relationship: BELONGS_TO_GENERATION; generation: 2,1.0,REL_0002,,2
+DRUG_Candesartan,GEN_ARB_2,REL_0003,relationship: BELONGS_TO_GENERATION; generation: 2,1.0,REL_0003,,2
+DRUG_Telmisartan,GEN_ARB_2,REL_0004,relationship: BELONGS_TO_GENERATION; generation: 2,1.0,REL_0004,,2
+DRUG_Eprosartan,GEN_ARB_2,REL_0005,relationship: BELONGS_TO_GENERATION; generation: 2,1.0,REL_0005,,2
+DRUG_Olmesartan,GEN_ARB_3,REL_0006,relationship: BELONGS_TO_GENERATION; generation: 3,1.0,REL_0006,,2
+DRUG_Azilsartan,GEN_ARB_3,REL_0007,relationship: BELONGS_TO_GENERATION; generation: 3,1.0,REL_0007,,2
+DRUG_Fimasartan,GEN_ARB_3,REL_0008,relationship: BELONGS_TO_GENERATION; generation: 3,1.0,REL_0008,,2
+INT_BCB,INT_BPT,REL_0009,relationship: TETRAZOLE_FORMATION; description: BCB + NaN3/ZnCl2 → [3+2]环加成 → 联苯四氮唑(BPT),1.0,REL_0009,,2
+SCA_NaN3,INT_BPT,REL_0010,relationship: SIDE_CHAIN_OF; description: NaN3/ZnCl2 催化氰基→四氮唑环化,1.0,REL_0010,,2
+INT_BPT,INT_Trityl_BPT,REL_0011,relationship: PROTECTION; description: BPT + TrCl/Et3N → N2-三苯甲基保护（确保N1区域选择性）,1.0,REL_0011,,2
+SCA_Trityl_Chloride,INT_Trityl_BPT,REL_0012,relationship: SIDE_CHAIN_OF; description: TrCl选择性保护四氮唑N2位,1.0,REL_0012,,2
+INT_BCB,DRUG_Losartan,REL_0013,relationship: ALKYLATION; description: BCB + 丁基咪唑甲醛→烷基化→四氮唑化→还原→氯沙坦,1.0,REL_0013,,2
+INT_BCB,DRUG_Valsartan,REL_0014,relationship: CONDENSATION; description: BCB + L-缬氨酸苄酯→缩合→正戊酰化→氢解脱苄→四氮唑化→缬沙坦,1.0,REL_0014,,2
+INT_BCB,DRUG_Irbesartan,REL_0015,relationship: ALKYLATION; description: BCB + 咪唑啉酮→N-烷基化→四氮唑化→厄贝沙坦,1.0,REL_0015,,2
+INT_Trityl_BPT,DRUG_Candesartan,REL_0016,relationship: ALKYLATION; description: Trityl-BPT + 苯并咪唑乙酯→N-烷基化→脱三苯甲基→水解→Cilexetil酯化→坎地沙坦酯,1.0,REL_0016,,2
+SCA_Cilexetil,DRUG_Candesartan,REL_0017,relationship: SIDE_CHAIN_OF; description: 环己氧羰氧乙基酯化→前药形式,1.0,REL_0017,,2
+INT_BPT,DRUG_Telmisartan,REL_0018,relationship: ALKYLATION; description: 苯并咪唑母核 + BPT → N-烷基化缩合→替米沙坦,1.0,REL_0018,,2
+INT_Benzimidazole_Core,DRUG_Telmisartan,REL_0019,relationship: ALKYLATION; description: 双苯并咪唑母核 + BPT偶联→替米沙坦,1.0,REL_0019,,2
+INT_BCB,DRUG_Eprosartan,REL_0020,relationship: CONDENSATION; description: 噻吩甲醛→Knoevenagel缩合→侧链引入→依普沙坦,1.0,REL_0020,,2
+INT_Trityl_BPT,DRUG_Olmesartan,REL_0021,relationship: ALKYLATION; description: Trityl-BPT + 咪唑羧酸乙酯→N-烷基化→脱保护→Medoxomil酯化→奥美沙坦酯,1.0,REL_0021,,2
+SCA_Medoxomil,DRUG_Olmesartan,REL_0022,relationship: SIDE_CHAIN_OF; description: Medoxomil酯化→前药提高口服生物利用度,1.0,REL_0022,,2
+INT_Trityl_BPT,DRUG_Azilsartan,REL_0023,relationship: ALKYLATION; description: Trityl-BPT + 噁二唑酮→N-烷基化→脱保护→Medoxomil酯化→阿齐沙坦酯,1.0,REL_0023,,2
+SCA_Medoxomil,DRUG_Azilsartan,REL_0024,relationship: SIDE_CHAIN_OF; description: Medoxomil酯化→前药形式,1.0,REL_0024,,2
+INT_BPT,DRUG_Fimasartan,REL_0025,relationship: ALKYLATION; description: 嘧啶酮母核 + BPT → N-烷基化→非马沙坦,1.0,REL_0025,,2
+GEN_ARB_1,GEN_ARB_2,REL_0026,relationship: EVOLVED_TO; description: 第2代在AT1亲和力/PK特性上迭代升级,1.0,REL_0026,,2
+GEN_ARB_2,GEN_ARB_3,REL_0027,relationship: EVOLVED_TO; description: 第3代在AT1亲和力/PK特性上迭代升级,1.0,REL_0027,,2

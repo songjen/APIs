@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>ARB沙坦类药物知识图谱 — Sartan Knowledge Graph</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:"Microsoft YaHei",sans-serif;background:#f5f6fa;overflow:hidden}
+#header{position:absolute;top:0;left:0;right:0;height:60px;background:linear-gradient(135deg,#2c3e50,#c0392b);color:white;display:flex;align-items:center;padding:0 24px;z-index:100;box-shadow:0 2px 10px rgba(0,0,0,0.2)}
+#header h1{font-size:20px;font-weight:600}
+#header .sub{font-size:13px;opacity:0.8;margin-left:12px}
+#legend{position:absolute;top:80px;left:16px;background:white;border-radius:8px;padding:12px 16px;box-shadow:0 2px 8px rgba(0,0,0,0.1);z-index:100;font-size:13px}
+#legend .item{display:flex;align-items:center;margin:4px 0}
+#legend .dot{width:12px;height:12px;border-radius:50%;margin-right:8px;flex-shrink:0}
+#tooltip{position:absolute;background:rgba(44,62,80,0.95);color:white;padding:12px 16px;border-radius:8px;font-size:13px;pointer-events:none;opacity:0;transition:opacity .2s;z-index:200;max-width:380px;line-height:1.5}
+#tooltip.show{opacity:1}
+#tooltip .tt-title{font-size:15px;font-weight:600;margin-bottom:4px}
+#tooltip .tt-row{display:flex;justify-content:space-between;gap:16px}
+#tooltip .tt-label{color:#bdc3c7}
+#controls{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);background:white;border-radius:24px;padding:8px 16px;box-shadow:0 2px 8px rgba(0,0,0,0.15);z-index:100;display:flex;gap:8px}
+#controls button{border:1px solid #ddd;background:white;padding:6px 14px;border-radius:16px;cursor:pointer;font-size:12px;color:#555;transition:all .2s}
+#controls button:hover{background:#c0392b;color:white;border-color:#c0392b}
+#info-panel{position:absolute;top:80px;right:16px;background:white;border-radius:8px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,0.1);z-index:100;font-size:12px;color:#666;max-width:240px}
+#info-panel b{color:#2c3e50}
+svg{width:100vw;height:100vh}
+</style></head><body>
+<div id="header"><h1>💗 ARB沙坦类药物知识图谱</h1><span class="sub">Angiotensin II Receptor Blockers | 1-3代 · 中间体 · 合成路线 · CAS</span></div>
+<div id="legend">
+<div class="item"><div class="dot" style="background:#E74C3C"></div>药物 Drug</div>
+<div class="item"><div class="dot" style="background:#3498DB"></div>核心中间体 Core Intermediate</div>
+<div class="item"><div class="dot" style="background:#2ECC71"></div>代际 Generation</div>
+<div class="item"><div class="dot" style="background:#F39C12"></div>侧链/试剂 Side Chain</div>
+</div>
+<div id="info-panel">节点: <b>21</b> &nbsp; 边: <b>28</b><br>覆盖 <b>3</b> 代ARB药物<br>含 <b>9</b> 个药物分子<br><small>拖拽 · 缩放 · 悬停详情</small></div>
+<div id="tooltip"></div>
+<div id="controls">
+<button onclick="resetZoom()">🔄 重置</button>
+<button onclick="filterGen('all')">全部</button>
+<button onclick="filterGen(1)">第1代</button>
+<button onclick="filterGen(2)">第2代</button>
+<button onclick="filterGen(3)">第3代</button>
+<button onclick="filterIntermediates()">🔬 中间体</button>
+</div>
+<svg id="graph"></svg>
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<script>
+// Click node to highlight connections
+let highlightedNode=null;
+function highlightConnections(event,d){
+  highlightedNode=d.id;
+  const connected=new Set([d.id]);
+  linksData.forEach(l=>{
+    const s=l.source.id||l.source, t=l.target.id||l.target;
+    if(s===d.id)connected.add(t);if(t===d.id)connected.add(s);
+  });
+  node.selectAll("circle").transition().duration(300).attr("opacity",nd=>connected.has(nd.id)?1:0.08);
+  node.selectAll("text").transition().duration(300).attr("opacity",nd=>connected.has(nd.id)?1:0.08);
+  link.transition().duration(300)
+    .attr("stroke-opacity",l=>{const s=l.source.id||l.source, t=l.target.id||l.target;return(connected.has(s)&&connected.has(t))?0.9:0.03;})
+    .attr("stroke-width",l=>{const s=l.source.id||l.source, t=l.target.id||l.target;return(connected.has(s)&&connected.has(t))?3:0.5;});
+  ll.transition().duration(300).attr("opacity",l=>{const s=l.source.id||l.source, t=l.target.id||l.target;return(connected.has(s)&&connected.has(t))?1:0;});
+  event.stopPropagation();
+}
+function resetHighlight(){
+  highlightedNode=null;
+  node.selectAll("circle").transition().duration(300).attr("opacity",1);
+  node.selectAll("text").transition().duration(300).attr("opacity",1);
+  link.transition().duration(300).attr("stroke-opacity",0.6).attr("stroke-width",1.5);
+  ll.transition().duration(300).attr("opacity",0.7);
+}
+</script>
+<script>
+const nodesData=[{"id": "GEN_ARB_1", "label": "1st Gen - Prototype", "title": "1st Gen - Prototype", "type": "Generation", "cas": "", "color": "#2ECC71", "formula": "", "mw": "", "smiles": "", "desc": "", "year": "", "gen": "1", "source": ""}, {"id": "GEN_ARB_2", "label": "2nd Gen - Structural Diversification", "title": "2nd Gen - Structural Diversification", "type": "Generation", "cas": "", "color": "#2ECC71", "formula": "", "mw": "", "smiles": "", "desc": "", "year": "", "gen": "2", "source": ""}, {"id": "GEN_ARB_3", "label": "3rd Gen - High-Affinity Prodrugs", "title": "3rd Gen - High-Affinity Prodrugs", "type": "Generation", "cas": "", "color": "#2ECC71", "formula": "", "mw": "", "smiles": "", "desc": "", "year": "", "gen": "3", "source": ""}, {"id": "INT_BCB", "label": "4'-溴甲基-2-氰基联苯", "title": "BCB (溴甲基氰基联苯)", "type": "Core Intermediate", "cas": "114772-53-1", "color": "#3498DB", "formula": "C14H10BrN", "mw": "272.14", "smiles": "", "desc": "ARB类药物核心砌块，与咪唑/苯并咪唑缩合后经四氮唑化得联苯四氮唑母核", "year": "", "gen": "", "source": ""}, {"id": "INT_BPT", "label": "联苯四氮唑中间体", "title": "BPT (联苯四氮唑)", "type": "Core Intermediate", "cas": "133051-88-4", "color": "#3498DB", "formula": "C14H11BrN4", "mw": "315.17", "smiles": "", "desc": "BCB经NaN3/ZnCl2环合→四氮唑，再与咪唑/苯并咪唑缩合构建ARB母核", "year": "", "gen": "", "source": ""}, {"id": "INT_Trityl_BPT", "label": "三苯甲基保护联苯四氮唑", "title": "Trityl-BPT", "type": "Core Intermediate", "cas": "", "color": "#3498DB", "formula": "", "mw": "", "smiles": "", "desc": "BPT经TrCl保护四氮唑N2位，确保后续烷基化反应在N1位进行", "year": "", "gen": "", "source": ""}, {"id": "INT_Val_Biphenyl_Aldehyde", "label": "缬沙坦醛中间体", "title": "Valsartan Aldehyde Intermediate", "type": "Core Intermediate", "cas": "", "color": "#3498DB", "formula": "", "mw": "", "smiles": "", "desc": "BCB与L-缬氨酸苄酯缩合→酰化→氢化脱苄→缬沙坦醛中间体", "year": "", "gen": "", "source": ""}, {"id": "INT_Benzimidazole_Core", "label": "替米沙坦苯并咪唑母核", "title": "Telmisartan Benzimidazole Core", "type": "Core Intermediate", "cas": "", "color": "#3498DB", "formula": "C19H18N4", "mw": "302.37", "smiles": "", "desc": "邻苯二胺衍生物缩合环化→苯并咪唑母核，再与BPT缩合得替米沙坦", "year": "", "gen": "", "source": ""}, {"id": "SCA_Trityl_Chloride", "label": "三苯基氯甲烷", "title": "Trityl Chloride (TrCl)", "type": "Side Chain / Reagent", "cas": "76-83-5", "color": "#F39C12", "formula": "", "mw": "", "smiles": "", "desc": "选择性保护四氮唑N2位，确保N1烷基化区域选择性", "year": "", "gen": "", "source": ""}, {"id": "SCA_Medoxomil", "label": "美多酯氯", "title": "Medoxomil Chloride", "type": "Side Chain / Reagent", "cas": "", "color": "#F39C12", "formula": "", "mw": "", "smiles": "", "desc": "与ARB羧酸成酯→前药形式，提高口服生物利用度", "year": "", "gen": "", "source": ""}, {"id": "SCA_Cilexetil", "label": "环己氧羰氧乙基", "title": "Cilexetil (环己氧羰氧乙基)", "type": "Side Chain / Reagent", "cas": "", "color": "#F39C12", "formula": "", "mw": "", "smiles": "", "desc": "与坎地沙坦羧酸成酯→坎地沙坦酯前药，口服后酯酶水解活化", "year": "", "gen": "", "source": ""}, {"id": "SCA_NaN3", "label": "叠氮化钠/氯化锌", "title": "Sodium Azide / ZnCl2", "type": "Side Chain / Reagent", "cas": "", "color": "#F39C12", "formula": "", "mw": "", "smiles": "", "desc": "与氰基发生[3+2]环加成→四氮唑环（Click反应前驱）", "year": "", "gen": "", "source": ""}, {"id": "DRUG_Losartan", "label": "氯沙坦", "title": "Losartan", "type": "Drug", "cas": "114798-26-4", "color": "#E74C3C", "formula": "C22H23ClN6O", "mw": "422.91", "smiles": "", "desc": "首个上市的ARB(Cozaar)，咪唑联苯四氮唑母核，活性代谢物EXP3174", "year": "1995", "gen": "", "source": "BCB→四氮唑→咪唑烷基化→氯沙坦"}, {"id": "DRUG_Valsartan", "label": "缬沙坦", "title": "Valsartan", "type": "Drug", "cas": "137862-53-4", "color": "#E74C3C", "formula": "C24H29N5O3", "mw": "435.52", "smiles": "", "desc": "非杂环ARB(Diovan)，酰化缬氨酸替代咪唑环，全球销量最高ARB", "year": "1996", "gen": "", "source": "BCB+L-缬氨酸→缩合→四氮唑化→缬沙坦"}, {"id": "DRUG_Irbesartan", "label": "厄贝沙坦", "title": "Irbesartan", "type": "Drug", "cas": "138402-11-6", "color": "#E74C3C", "formula": "C25H28N6O", "mw": "428.53", "smiles": "", "desc": "咪唑啉酮环ARB(Avapro)，长效T1/2=11-15h，insurmountable拮抗", "year": "1997", "gen": "", "source": "BCB→四氮唑→咪唑啉酮环构建→厄贝沙坦"}, {"id": "DRUG_Candesartan", "label": "坎地沙坦酯", "title": "Candesartan Cilexetil", "type": "Drug", "cas": "145040-37-5", "color": "#E74C3C", "formula": "C33H34N6O6", "mw": "610.66", "smiles": "", "desc": "苯并咪唑ARB前药(Atacand)，insurmountable拮抗，长效T1/2=9h", "year": "1997", "gen": "", "source": "BCB→四氮唑→三苯甲基保护→苯并咪唑缩合→脱保护→酯化→坎地沙坦酯"}, {"id": "DRUG_Telmisartan", "label": "替米沙坦", "title": "Telmisartan", "type": "Drug", "cas": "144701-48-4", "color": "#E74C3C", "formula": "C33H30N4O2", "mw": "514.62", "smiles": "", "desc": "双苯并咪唑ARB(Micardis)，最长T1/2≈24h，PPARγ部分激动活性", "year": "1998", "gen": "", "source": "苯并咪唑母核+BPT缩合→替米沙坦"}, {"id": "DRUG_Eprosartan", "label": "依普沙坦", "title": "Eprosartan", "type": "Drug", "cas": "133040-01-4", "color": "#E74C3C", "formula": "C23H24N2O4S", "mw": "424.52", "smiles": "", "desc": "非联苯非四氮唑ARB(Teveten)，噻吩丙烯酸母核，双通道排泄", "year": "1998", "gen": "", "source": "噻吩甲醛+丙二酸→Knoevenagel→侧链缩合→依普沙坦"}, {"id": "DRUG_Olmesartan", "label": "奥美沙坦酯", "title": "Olmesartan Medoxomil", "type": "Drug", "cas": "144689-63-4", "color": "#E74C3C", "formula": "C29H30N6O6", "mw": "558.59", "smiles": "", "desc": "咪唑ARB前药(Benicar)，最高AT1亲和力之一，medoxomil前药酯化", "year": "2002", "gen": "", "source": "BCB→四氮唑→三苯甲基保护→咪唑缩合→脱保护→Medoxomil酯化"}, {"id": "DRUG_Azilsartan", "label": "阿齐沙坦酯", "title": "Azilsartan Medoxomil", "type": "Drug", "cas": "863031-21-4", "color": "#E74C3C", "formula": "C30H24N4O8", "mw": "568.53", "smiles": "", "desc": "噁二唑酮ARB前药(Edarbi)，对AT1亲和力极高，长效降压", "year": "2011", "gen": "", "source": "BCB→噁二唑酮环构建→Medoxomil酯化→阿齐沙坦酯"}, {"id": "DRUG_Fimasartan", "label": "非马沙坦", "title": "Fimasartan", "type": "Drug", "cas": "247257-48-3", "color": "#E74C3C", "formula": "C26H31N7OS", "mw": "489.64", "smiles": "", "desc": "嘧啶酮ARB(Kanarb，韩国首个自研ARB)，快速起效(1h达峰)", "year": "2010", "gen": "", "source": "嘧啶酮母核+联苯四氮唑侧链偶联→非马沙坦"}];
+const linksData=[{"source": "DRUG_Losartan", "target": "GEN_ARB_1", "relationship": "BELONGS_TO_GENERATION", "color": "#95A5A6", "detail": ""}, {"source": "DRUG_Valsartan", "target": "GEN_ARB_2", "relationship": "BELONGS_TO_GENERATION", "color": "#95A5A6", "detail": ""}, {"source": "DRUG_Irbesartan", "target": "GEN_ARB_2", "relationship": "BELONGS_TO_GENERATION", "color": "#95A5A6", "detail": ""}, {"source": "DRUG_Candesartan", "target": "GEN_ARB_2", "relationship": "BELONGS_TO_GENERATION", "color": "#95A5A6", "detail": ""}, {"source": "DRUG_Telmisartan", "target": "GEN_ARB_2", "relationship": "BELONGS_TO_GENERATION", "color": "#95A5A6", "detail": ""}, {"source": "DRUG_Eprosartan", "target": "GEN_ARB_2", "relationship": "BELONGS_TO_GENERATION", "color": "#95A5A6", "detail": ""}, {"source": "DRUG_Olmesartan", "target": "GEN_ARB_3", "relationship": "BELONGS_TO_GENERATION", "color": "#95A5A6", "detail": ""}, {"source": "DRUG_Azilsartan", "target": "GEN_ARB_3", "relationship": "BELONGS_TO_GENERATION", "color": "#95A5A6", "detail": ""}, {"source": "DRUG_Fimasartan", "target": "GEN_ARB_3", "relationship": "BELONGS_TO_GENERATION", "color": "#95A5A6", "detail": ""}, {"source": "INT_BCB", "target": "INT_BPT", "relationship": "TETRAZOLE_FORMATION", "color": "#3498DB", "detail": "BCB + NaN3/ZnCl2 → [3+2]环加成 → 联苯四氮唑(BPT)"}, {"source": "SCA_NaN3", "target": "INT_BPT", "relationship": "SIDE_CHAIN_OF", "color": "#F39C12", "detail": "NaN3/ZnCl2 催化氰基→四氮唑环化"}, {"source": "INT_BPT", "target": "INT_Trityl_BPT", "relationship": "PROTECTION", "color": "#9B59B6", "detail": "BPT + TrCl/Et3N → N2-三苯甲基保护（确保N1区域选择性）"}, {"source": "SCA_Trityl_Chloride", "target": "INT_Trityl_BPT", "relationship": "SIDE_CHAIN_OF", "color": "#F39C12", "detail": "TrCl选择性保护四氮唑N2位"}, {"source": "INT_BCB", "target": "DRUG_Losartan", "relationship": "ALKYLATION", "color": "#E74C3C", "detail": "BCB + 丁基咪唑甲醛→烷基化→四氮唑化→还原→氯沙坦"}, {"source": "INT_BCB", "target": "DRUG_Valsartan", "relationship": "CONDENSATION", "color": "#E67E22", "detail": "BCB + L-缬氨酸苄酯→缩合→正戊酰化→氢解脱苄→四氮唑化→缬沙坦"}, {"source": "INT_BCB", "target": "DRUG_Irbesartan", "relationship": "ALKYLATION", "color": "#E74C3C", "detail": "BCB + 咪唑啉酮→N-烷基化→四氮唑化→厄贝沙坦"}, {"source": "INT_Trityl_BPT", "target": "DRUG_Candesartan", "relationship": "ALKYLATION", "color": "#E74C3C", "detail": "Trityl-BPT + 苯并咪唑乙酯→N-烷基化→脱三苯甲基→水解→Cilexetil酯化→坎地沙坦酯"}, {"source": "SCA_Cilexetil", "target": "DRUG_Candesartan", "relationship": "SIDE_CHAIN_OF", "color": "#F39C12", "detail": "环己氧羰氧乙基酯化→前药形式"}, {"source": "INT_BPT", "target": "DRUG_Telmisartan", "relationship": "ALKYLATION", "color": "#E74C3C", "detail": "苯并咪唑母核 + BPT → N-烷基化缩合→替米沙坦"}, {"source": "INT_Benzimidazole_Core", "target": "DRUG_Telmisartan", "relationship": "ALKYLATION", "color": "#E74C3C", "detail": "双苯并咪唑母核 + BPT偶联→替米沙坦"}, {"source": "INT_BCB", "target": "DRUG_Eprosartan", "relationship": "CONDENSATION", "color": "#E67E22", "detail": "噻吩甲醛→Knoevenagel缩合→侧链引入→依普沙坦"}, {"source": "INT_Trityl_BPT", "target": "DRUG_Olmesartan", "relationship": "ALKYLATION", "color": "#E74C3C", "detail": "Trityl-BPT + 咪唑羧酸乙酯→N-烷基化→脱保护→Medoxomil酯化→奥美沙坦酯"}, {"source": "SCA_Medoxomil", "target": "DRUG_Olmesartan", "relationship": "SIDE_CHAIN_OF", "color": "#F39C12", "detail": "Medoxomil酯化→前药提高口服生物利用度"}, {"source": "INT_Trityl_BPT", "target": "DRUG_Azilsartan", "relationship": "ALKYLATION", "color": "#E74C3C", "detail": "Trityl-BPT + 噁二唑酮→N-烷基化→脱保护→Medoxomil酯化→阿齐沙坦酯"}, {"source": "SCA_Medoxomil", "target": "DRUG_Azilsartan", "relationship": "SIDE_CHAIN_OF", "color": "#F39C12", "detail": "Medoxomil酯化→前药形式"}, {"source": "INT_BPT", "target": "DRUG_Fimasartan", "relationship": "ALKYLATION", "color": "#E74C3C", "detail": "嘧啶酮母核 + BPT → N-烷基化→非马沙坦"}, {"source": "GEN_ARB_1", "target": "GEN_ARB_2", "relationship": "EVOLVED_TO", "color": "#2ECC71", "detail": "第2代在AT1亲和力/PK特性上迭代升级"}, {"source": "GEN_ARB_2", "target": "GEN_ARB_3", "relationship": "EVOLVED_TO", "color": "#2ECC71", "detail": "第3代在AT1亲和力/PK特性上迭代升级"}];
+const svg=d3.select("#graph"),W=window.innerWidth,H=window.innerHeight;
+const g=svg.append("g");
+const zoom=d3.zoom().scaleExtent([0.1,4]).on("zoom",e=>g.attr("transform",e.transform));
+svg.call(zoom);
+const sim=d3.forceSimulation(nodesData)
+ .force("link",d3.forceLink(linksData).id(d=>d.id).distance(130))
+ .force("charge",d3.forceManyBody().strength(-450))
+ .force("center",d3.forceCenter(W/2,H/2))
+ .force("collision",d3.forceCollide(35));
+const defs=svg.append("defs");
+linksData.forEach((l,i)=>{defs.append("marker").attr("id","a"+i).attr("viewBox","0 -5 10 10").attr("refX",22).attr("refY",0).attr("markerWidth",6).attr("markerHeight",6).attr("orient","auto").append("path").attr("d","M0,-5L10,0L0,5").attr("fill",l.color)});
+const link=g.append("g").selectAll("line").data(linksData).join("line")
+ .attr("stroke",d=>d.color).attr("stroke-width",1.5).attr("stroke-opacity",0.6).attr("marker-end",(d,i)=>"url(#a"+i+")");
+const node=g.append("g").selectAll("g").data(nodesData).join("g")
+ .call(d3.drag().on("start",(e,d)=>{if(!e.active)sim.alphaTarget(0.3).restart();d.fx=d.x;d.fy=d.y})
+  .on("drag",(e,d)=>{d.fx=e.x;d.fy=e.y}).on("end",(e,d)=>{if(!e.active)sim.alphaTarget(0);d.fx=null;d.fy=null}));
+node.append("circle").attr("r",d=>d.type==="Drug"?14:d.type==="Generation"?18:d.type==="Core Intermediate"?12:8)
+ .attr("fill",d=>d.color).attr("stroke","#fff").attr("stroke-width",1.5).style("cursor","pointer")
+ .on("mouseover",(e,d)=>{const tt=d3.select("#tooltip");tt.classed("show",true)
+  .style("left",(e.pageX+15)+"px").style("top",(e.pageY-10)+"px")
+  .html('<div class="tt-title">'+d.label+' '+d.title+'</div><div class="tt-row"><span class="tt-label">类型</span><span>'+d.type+'</span></div>'+(d.cas?'<div class="tt-row"><span class="tt-label">CAS</span><span>'+d.cas+'</span></div>':'')+(d.formula?'<div class="tt-row"><span class="tt-label">分子式</span><span>'+d.formula+'</span></div>':'')+(d.mw?'<div class="tt-row"><span class="tt-label">分子量</span><span>'+d.mw+'</span></div>':'')+(d.year?'<div class="tt-row"><span class="tt-label">上市</span><span>'+d.year+'</span></div>':'')+(d.source?'<div class="tt-row"><span class="tt-label">来源</span><span>'+d.source+'</span></div>':'')+(d.desc?'<div style="margin-top:6px;color:#ccc">'+d.desc+'</div>':''))})
+ .on("mouseout",()=>d3.select("#tooltip").classed("show",false)).on("click",highlightConnections);
+node.append("text").text(d=>d.label).attr("font-size",d=>d.type==="Generation"?13:d.type==="Drug"?10:9)
+ .attr("font-family","Microsoft YaHei,sans-serif").attr("dx",18).attr("dy",4).attr("fill","#333").style("pointer-events","none");
+const ll=g.append("g").selectAll("text").data(linksData).join("text").text(d=>d.relationship)
+ .attr("font-size",7).attr("fill","#aaa").attr("text-anchor","middle").attr("dy",-5).style("pointer-events","none");
+sim.on("tick",()=>{link.attr("x1",d=>d.source.x).attr("y1",d=>d.source.y).attr("x2",d=>d.target.x).attr("y2",d=>d.target.y);
+ node.attr("transform",d=>`translate(${d.x},${d.y})`);
+ ll.attr("x",d=>(d.source.x+d.target.x)/2).attr("y",d=>(d.source.y+d.target.y)/2)});
+function resetZoom(){svg.transition().duration(500).call(zoom.transform,d3.zoomIdentity)}
+function filterGen(gen){if(gen==='all'){node.selectAll("circle").attr("opacity",1);node.selectAll("text").attr("opacity",1);link.attr("opacity",0.6);ll.attr("opacity",0.7)}
+else{const gid="GEN_ARB_"+gen;const cd=new Set();linksData.forEach(l=>{if(l.target===gid)cd.add(l.source)});
+ node.selectAll("circle").attr("opacity",d=>cd.has(d.id)?1:d.id===gid?1:0.12);
+ node.selectAll("text").attr("opacity",d=>cd.has(d.id)?1:d.id===gid?1:0.12);
+ link.attr("opacity",0.12);ll.attr("opacity",0.12)}}
+function filterIntermediates(){node.selectAll("circle").attr("opacity",d=>d.type==="Core Intermediate"?1:0.12);
+ node.selectAll("text").attr("opacity",d=>d.type==="Core Intermediate"?1:0.12);
+ link.attr("opacity",0.12);ll.attr("opacity",0.12)}
+svg.on("click",resetHighlight);</script></body></html>

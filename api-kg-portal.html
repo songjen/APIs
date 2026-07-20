@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>API-KG · 原料药知识图谱门户</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,"Microsoft YaHei","PingFang SC",sans-serif;background:linear-gradient(135deg,#0f172a 0%,#1e293b 50%,#0f172a 100%);color:#e2e8f0;min-height:100vh}
+.hero{text-align:center;padding:60px 24px 40px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(ellipse at 30% 50%,rgba(59,130,246,0.15) 0%,transparent 60%),radial-gradient(ellipse at 70% 20%,rgba(139,92,246,0.1) 0%,transparent 50%),radial-gradient(ellipse at 50% 80%,rgba(34,197,94,0.08) 0%,transparent 40%);pointer-events:none}
+.hero h1{font-size:3rem;font-weight:800;background:linear-gradient(135deg,#60a5fa,#a78bfa,#34d399);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;position:relative;letter-spacing:-0.02em}
+.hero .subtitle{font-size:1.15rem;color:#94a3b8;margin-top:12px;position:relative}
+.stats-row{display:flex;justify-content:center;gap:32px;margin-top:28px;position:relative}
+.stat{text-align:center}
+.stat .num{font-size:2rem;font-weight:700;color:#60a5fa}
+.stat .label{font-size:0.82rem;color:#64748b;margin-top:2px}
+
+.container{max-width:1200px;margin:0 auto;padding:0 20px 60px}
+.section-title{font-size:1.1rem;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:2px;margin:32px 0 16px;padding-left:4px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+
+.card{background:linear-gradient(135deg,rgba(30,41,59,0.9),rgba(30,41,59,0.6));border:1px solid rgba(71,85,105,0.3);border-radius:16px;padding:24px;transition:all 0.3s;position:relative;overflow:hidden;text-decoration:none;display:block;color:inherit;cursor:pointer}
+.card:hover{transform:translateY(-3px);border-color:rgba(96,165,250,0.5);box-shadow:0 8px 30px rgba(0,0,0,0.4),0 0 20px rgba(59,130,246,0.1)}
+.card .icon{font-size:2.5rem;margin-bottom:12px;display:block}
+.card .name{font-size:1.05rem;font-weight:700;margin-bottom:4px}
+.card .eng{font-size:0.78rem;color:#64748b;margin-bottom:10px}
+.card .desc{font-size:0.82rem;color:#94a3b8;line-height:1.5;margin-bottom:14px}
+.card .meta{display:flex;align-items:center;gap:12px;font-size:0.75rem}
+.card .badge{padding:3px 10px;border-radius:10px;font-weight:600;font-size:0.7rem}
+.badge-done{background:rgba(34,197,94,0.15);color:#4ade80;border:1px solid rgba(34,197,94,0.3)}
+.badge-soon{background:rgba(148,163,184,0.1);color:#94a3b8;border:1px solid rgba(148,163,184,0.2)}
+.badge-sub{display:flex;align-items:center;gap:4px}
+.card .stats{font-size:0.7rem;color:#475569}
+.card-placeholder{opacity:0.5;cursor:default}
+.card-placeholder:hover{transform:none;border-color:rgba(71,85,105,0.2);box-shadow:none}
+
+.gen-tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.gen-tag{font-size:0.65rem;padding:2px 6px;border-radius:4px;background:rgba(59,130,246,0.1);color:#60a5fa;white-space:nowrap}
+
+.footer{text-align:center;padding:40px 20px;color:#475569;font-size:0.78rem;border-top:1px solid rgba(71,85,105,0.2);margin-top:20px}
+.footer a{color:#60a5fa;text-decoration:none}
+
+.nav-back{position:fixed;top:16px;left:16px;z-index:100;background:rgba(30,41,59,0.9);border:1px solid rgba(71,85,105,0.4);color:#94a3b8;padding:8px 16px;border-radius:8px;text-decoration:none;font-size:0.8rem;transition:all .2s}
+.nav-back:hover{color:#e2e8f0;border-color:rgba(96,165,250,0.5)}
+</style>
+</head>
+<body>
+
+<a href="./" class="nav-back">← 原料药产业链图谱</a>
+
+<div class="hero">
+  <h1>API Knowledge Graph</h1>
+  <div class="subtitle">原料药知识图谱门户 · PubChem 化学数据驱动 · D3.js 交互可视化</div>
+  <div class="stats-row">
+    <div class="stat"><div class="num">12</div><div class="label">药物类别</div></div>
+    <div class="stat"><div class="num">4</div><div class="label">已完成</div></div>
+    <div class="stat"><div class="num">49</div><div class="label">药物分子</div></div>
+    <div class="stat"><div class="num">186</div><div class="label">图谱边</div></div>
+  </div>
+</div>
+
+<div class="container">
+
+  <div class="section-title">▎β-内酰胺类抗生素</div>
+  <div class="grid">
+    <a href="./cephalosporin_graph.html" class="card">
+      <span class="icon">🧬</span>
+      <div class="name">头孢菌素类</div>
+      <div class="eng">Cephalosporins</div>
+      <div class="desc">1-5代头孢菌素，含7-ACA/7-ADCA/GCLE关键中间体及完整合成路线</div>
+      <div class="meta">
+        <span class="badge badge-done">✅ 已完成</span>
+        <span class="stats">25药物 · 43节点 · 64边</span>
+      </div>
+      <div class="gen-tags"><span class="gen-tag">G1</span><span class="gen-tag">G2</span><span class="gen-tag">G3</span><span class="gen-tag">G4</span><span class="gen-tag">G5</span></div>
+    </a>
+
+    <a href="./carbapenem_v2_graph.html" class="card">
+      <span class="icon">🦠</span>
+      <div class="name">培南类</div>
+      <div class="eng">Carbapenems</div>
+      <div class="desc">4AA/4BMA/MAP供应链 | 30+供应商 | 产能·资质·企业协同</div>
+      <div class="meta">
+        <span class="badge badge-done">✅ 已完成</span>
+        <span class="stats">8API·30+供应商 · 46节点 · 63边</span>
+      </div>
+      <div class="gen-tags"><span class="gen-tag">G1</span><span class="gen-tag">G2</span><span class="gen-tag">1β-甲基</span><span class="gen-tag">长效/口服</span></div>
+    </a>
+
+    <div class="card card-placeholder">
+      <span class="icon">💉</span>
+      <div class="name">青霉素类</div>
+      <div class="eng">Penicillins</div>
+      <div class="desc">天然青霉素·半合成青霉素·β-内酰胺酶抑制剂复方</div>
+      <div class="meta"><span class="badge badge-soon">✅ 已完成</span></div>
+    </div>
+
+    <div class="card card-placeholder">
+      <span class="icon">🧪</span>
+      <div class="name">β-内酰胺酶抑制剂</div>
+      <div class="eng">β-Lactamase Inhibitors</div>
+      <div class="desc">克拉维酸·舒巴坦·他唑巴坦·阿维巴坦</div>
+      <div class="meta"><span class="badge badge-soon">✅ 已完成</span></div>
+    </div>
+  </div>
+
+  <div class="section-title">▎心血管系统药物</div>
+  <div class="grid">
+    <a href="./statin_v2_graph.html" class="card">
+      <span class="icon">💊</span>
+      <div class="name">他汀类</div>
+      <div class="eng">Statins / HMG-CoA Reductase Inhibitors</div>
+      <div class="desc">天然发酵→半合成→全合成三代进化，Monacolin J→辛伐他汀半合成路线</div>
+      <div class="meta">
+        <span class="badge badge-done">✅ 已完成</span>
+        <span class="stats">8API·12供应商 · 29节点 · 33边</span>
+      </div>
+      <div class="gen-tags"><span class="gen-tag">发酵</span><span class="gen-tag">半合成</span><span class="gen-tag">全合成</span></div>
+    </a>
+
+    <a href="./arb_graph.html" class="card">
+      <span class="icon">💗</span>
+      <div class="name">ARB沙坦类</div>
+      <div class="eng">Angiotensin II Receptor Blockers</div>
+      <div class="desc">联苯四氮唑(BCB/BPT)母核，前药设计(Cilexetil/Medoxomil)提高口服利用度</div>
+      <div class="meta">
+        <span class="badge badge-done">✅ 已完成</span>
+        <span class="stats">9药物 · 21节点 · 28边</span>
+      </div>
+      <div class="gen-tags"><span class="gen-tag">原型</span><span class="gen-tag">多样化</span><span class="gen-tag">高亲和前药</span></div>
+    </a>
+
+    <div class="card card-placeholder">
+      <span class="icon">🫀</span>
+      <div class="name">ACE抑制剂类</div>
+      <div class="eng">ACE Inhibitors (普利类)</div>
+      <div class="desc">卡托普利·依那普利·赖诺普利·雷米普利等Prils</div>
+      <div class="meta"><span class="badge badge-soon">✅ 已完成</span></div>
+    </div>
+
+    <div class="card card-placeholder">
+      <span class="icon">💧</span>
+      <div class="name">利尿剂类</div>
+      <div class="eng">Diuretics</div>
+      <div class="desc">噻嗪类·袢利尿剂·保钾利尿剂</div>
+      <div class="meta"><span class="badge badge-soon">✅ 已完成</span></div>
+    </div>
+  </div>
+
+  <div class="section-title">▎抗感染及其他</div>
+  <div class="grid">
+    <div class="card card-placeholder">
+      <span class="icon">🩸</span>
+      <div class="name">喹诺酮类</div>
+      <div class="eng">Quinolones / Fluoroquinolones</div>
+      <div class="desc">3,4-二氯硝基苯→Q酸/环丙羧酸→API | KSM-DI-API模型 | 京新/国邦</div>
+      <div class="meta"><span class="badge badge-soon">🔜 即将构建</span></div>
+    </div>
+
+    <div class="card card-placeholder">
+      <span class="icon">🧫</span>
+      <div class="name">四环素类</div>
+      <div class="eng">Tetracyclines</div>
+      <div class="desc">天然四环素·多西环素·米诺环素·替加环素</div>
+      <div class="meta"><span class="badge badge-soon">🔜 即将构建</span></div>
+    </div>
+
+    <div class="card card-placeholder">
+      <span class="icon">🩹</span>
+      <div class="name">大环内酯类</div>
+      <div class="eng">Macrolides</div>
+      <div class="desc">红霉素·阿奇霉素·克拉霉素·罗红霉素</div>
+      <div class="meta"><span class="badge badge-soon">🔜 即将构建</span></div>
+    </div>
+
+    <div class="card card-placeholder">
+      <span class="icon">💎</span>
+      <div class="name">质子泵抑制剂</div>
+      <div class="eng">Proton Pump Inhibitors (PPIs)</div>
+      <div class="desc">奥美拉唑·兰索拉唑·泮托拉唑·雷贝拉唑·埃索美拉唑</div>
+      <div class="meta"><span class="badge badge-soon">🔜 即将构建</span></div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  <p>Powered by WorkBuddy AI · 数据来源 PubChem · 化学文献 · GitHub Pages 部署</p>
+  <p style="margin-top:8px"><a href="https://github.com/songjen/APIs">songjen/APIs</a></p>
+</div>
+
+<div style="text-align:center;padding:10px 0 30px"><a href="./kg-editor.html" style="display:inline-block;background:#3b82f6;color:white;padding:10px 28px;border-radius:10px;text-decoration:none;font-size:0.9rem;font-weight:600">🛠 打开元数据编辑器</a></div>
+</body>
+</html>

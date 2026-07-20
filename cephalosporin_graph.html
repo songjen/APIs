@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>头孢菌素知识图谱 — Cephalosporin Knowledge Graph</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: "Microsoft YaHei", sans-serif; background: #f5f6fa; overflow: hidden; }
+#header { position: absolute; top: 0; left: 0; right: 0; height: 60px; background: linear-gradient(135deg, #2c3e50, #3498db); color: white; display: flex; align-items: center; padding: 0 24px; z-index: 100; box-shadow: 0 2px 10px rgba(0,0,0,0.2); }
+#header h1 { font-size: 20px; font-weight: 600; }
+#header .subtitle { font-size: 13px; opacity: 0.8; margin-left: 12px; }
+#legend { position: absolute; top: 80px; left: 16px; background: white; border-radius: 8px; padding: 12px 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); z-index: 100; font-size: 13px; }
+#legend .item { display: flex; align-items: center; margin: 4px 0; }
+#legend .dot { width: 12px; height: 12px; border-radius: 50%; margin-right: 8px; flex-shrink: 0; }
+#tooltip { position: absolute; background: rgba(44,62,80,0.95); color: white; padding: 12px 16px; border-radius: 8px; font-size: 13px; pointer-events: none; opacity: 0; transition: opacity 0.2s; z-index: 200; max-width: 360px; line-height: 1.5; }
+#tooltip.visible { opacity: 1; }
+#tooltip .tt-title { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+#tooltip .tt-row { display: flex; justify-content: space-between; gap: 16px; }
+#tooltip .tt-label { color: #bdc3c7; }
+#controls { position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%); background: white; border-radius: 24px; padding: 8px 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.15); z-index: 100; display: flex; gap: 8px; }
+#controls button { border: 1px solid #ddd; background: white; padding: 6px 14px; border-radius: 16px; cursor: pointer; font-size: 12px; color: #555; transition: all 0.2s; }
+#controls button:hover { background: #3498db; color: white; border-color: #3498db; }
+#info-panel { position: absolute; top: 80px; right: 16px; background: white; border-radius: 8px; padding: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); z-index: 100; font-size: 12px; color: #666; max-width: 240px; }
+#info-panel b { color: #2c3e50; }
+svg { width: 100vw; height: 100vh; }
+</style>
+</head>
+<body>
+<div id="header">
+    <h1>🧬 头孢菌素知识图谱</h1>
+    <span class="subtitle">Cephalosporin Knowledge Graph | 1-5代 · 中间体 · 合成路线</span>
+</div>
+<div id="legend">
+    <div class="item"><div class="dot" style="background:#E74C3C"></div>药物 Drug</div>
+    <div class="item"><div class="dot" style="background:#3498DB"></div>核心中间体 Core Intermediate</div>
+    <div class="item"><div class="dot" style="background:#2ECC71"></div>代际 Generation</div>
+    <div class="item"><div class="dot" style="background:#F39C12"></div>侧链酸 Side Chain Acid</div>
+    <div class="item"><div class="dot" style="background:#9B59B6"></div>起始原料 Starting Material</div>
+</div>
+<div id="info-panel">
+    节点: <b>43</b> &nbsp; 边: <b>64</b><br>
+    覆盖 <b>5</b> 代头孢菌素<br>
+    含 <b>22</b> 个药物分子<br>
+    <small>拖拽节点 · 滚轮缩放 · 点击查看详情</small>
+</div>
+<div id="tooltip"></div>
+<div id="controls">
+    <button onclick="resetZoom()">🔄 重置视图</button>
+    <button onclick="restoreAll()">🔆 恢复全部</button>
+    <button onclick="filterGen('all')">全部</button>
+    <button onclick="filterGen(1)">第1代</button>
+    <button onclick="filterGen(2)">第2代</button>
+    <button onclick="filterGen(3)">第3代</button>
+    <button onclick="filterGen(4)">第4代</button>
+    <button onclick="filterGen(5)">第5代</button>
+    <button onclick="highlightIntermediates()">🔬 中间体</button>
+</div>
+<svg id="graph"></svg>
+
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<script>
+const nodesData = [{"id": "GEN_1", "label": "1st Gen", "title": "1st Gen", "type": "Generation", "cas": "", "color": "#2ECC71", "formula": "", "mw": "", "smiles": "", "desc": "", "year": "", "gen": 1}, {"id": "GEN_2", "label": "2nd Gen", "title": "2nd Gen", "type": "Generation", "cas": "", "color": "#2ECC71", "formula": "", "mw": "", "smiles": "", "desc": "", "year": "", "gen": 2}, {"id": "GEN_3", "label": "3rd Gen", "title": "3rd Gen", "type": "Generation", "cas": "", "color": "#2ECC71", "formula": "", "mw": "", "smiles": "", "desc": "", "year": "", "gen": 3}, {"id": "GEN_4", "label": "4th Gen", "title": "4th Gen", "type": "Generation", "cas": "", "color": "#2ECC71", "formula": "", "mw": "", "smiles": "", "desc": "", "year": "", "gen": 4}, {"id": "GEN_5", "label": "5th Gen", "title": "5th Gen", "type": "Generation", "cas": "", "color": "#2ECC71", "formula": "", "mw": "", "smiles": "", "desc": "", "year": "", "gen": 5}, {"id": "INT_7-ACA", "label": "7-ACA", "title": "7-ACA", "type": "Core Intermediate", "cas": "957-68-6", "color": "#3498DB", "formula": "C10H12N2O5S", "mw": 272.28, "smiles": "CC(=O)OCC1=C(N2[C@@H]([C@@H](C2=O)N)SC1)C(=O)O", "desc": "头孢菌素C酶解/化学裂解产物，1-3代头孢核心中间体", "year": "", "gen": ""}, {"id": "INT_7-ADCA", "label": "7-ADCA", "title": "7-ADCA", "type": "Core Intermediate", "cas": "22252-43-3", "color": "#3498DB", "formula": "C8H10N2O3S", "mw": 214.24, "smiles": "CC1=C(N2[C@@H]([C@@H](C2=O)N)SC1)C(=O)O", "desc": "7-ACA氢解脱乙酰氧基产物，头孢氨苄/头孢拉定关键中间体", "year": "", "gen": ""}, {"id": "INT_GCLE", "label": "GCLE", "title": "GCLE", "type": "Core Intermediate", "cas": "104146-10-3", "color": "#3498DB", "formula": "C24H23ClN2O5S", "mw": 486.97, "smiles": "", "desc": "青霉素G扩环产物，3代头孢关键中间体（头孢克肟/头孢地尼等）", "year": "", "gen": ""}, {"id": "INT_7-ACCA", "label": "7-ACCA", "title": "7-ACCA", "type": "Core Intermediate", "cas": "53994-69-7", "color": "#3498DB", "formula": "C7H7ClN2O3S", "mw": 234.66, "smiles": "", "desc": "青霉素工业盐经扩环重排+氯代得到，头孢克洛/头孢维星关键中间体", "year": "", "gen": ""}, {"id": "INT_PenG", "label": "青霉素工业盐", "title": "青霉素工业盐", "type": "Starting Material", "cas": "61-33-6", "color": "#9B59B6", "formula": "", "mw": "", "smiles": "", "desc": "发酵法生产，经扩环重排转化为头孢母核（7-ADCA/7-ACCA/GCLE）", "year": "", "gen": ""}, {"id": "INT_CephC", "label": "Cephalosporin C", "title": "Cephalosporin C", "type": "Starting Material", "cas": "61-24-5", "color": "#9B59B6", "formula": "", "mw": "", "smiles": "", "desc": "顶头孢霉发酵产物，酶解得7-ACA", "year": "", "gen": ""}, {"id": "SCA_Phenylglycine", "label": "D-Phenylglycine", "title": "D-Phenylglycine", "type": "Side Chain Acid", "cas": "875-74-1", "color": "#F39C12", "formula": "", "mw": "", "smiles": "", "desc": "Dane盐法/DCC缩合法引入", "year": "", "gen": ""}, {"id": "SCA_DHPC", "label": "D-4-Hydroxyphenylglycine", "title": "D-4-Hydroxyphenylglycine", "type": "Side Chain Acid", "cas": "22818-40-2", "color": "#F39C12", "formula": "", "mw": "", "smiles": "", "desc": "对羟基苯甘氨酸", "year": "", "gen": ""}, {"id": "SCA_Tetrazole", "label": "1H-Tetrazole-1-acetic Acid", "title": "1H-Tetrazole-1-acetic Acid", "type": "Side Chain Acid", "cas": "21732-17-2", "color": "#F39C12", "formula": "", "mw": "", "smiles": "", "desc": "四氮唑乙酸，1代/2代头孢侧链", "year": "", "gen": ""}, {"id": "SCA_Thiazole", "label": "2-Aminothiazole-4-acetic Acid", "title": "2-Aminothiazole-4-acetic Acid", "type": "Side Chain Acid", "cas": "29676-71-9", "color": "#F39C12", "formula": "", "mw": "", "smiles": "", "desc": "氨噻肟酸前体，3代/4代头孢核心侧链", "year": "", "gen": ""}, {"id": "SCA_ATMA", "label": "AE-Active Ester (ATMA衍生物)", "title": "AE-Active Ester (ATMA衍生物)", "type": "Side Chain Acid", "cas": "65872-41-5", "color": "#F39C12", "formula": "", "mw": "", "smiles": "", "desc": "甲氧亚氨基氨噻肟酸（氨噻肟酸甲氧亚胺衍生物）", "year": "", "gen": ""}, {"id": "SCA_CAEM", "label": "CAEM (Cefazolin side chain)", "title": "CAEM (Cefazolin side chain)", "type": "Side Chain Acid", "cas": "", "color": "#F39C12", "formula": "", "mw": "", "smiles": "", "desc": "", "year": "", "gen": ""}, {"id": "SCA_Mandelic", "label": "Mandelic Acid", "title": "Mandelic Acid", "type": "Side Chain Acid", "cas": "611-71-2", "color": "#F39C12", "formula": "", "mw": "", "smiles": "", "desc": "扁桃酸，2代头孢侧链", "year": "", "gen": ""}, {"id": "DRUG_Cephalothin", "label": "头孢噻吩\nCephalothin", "title": "Cephalothin", "type": "Drug", "cas": "153-61-7", "color": "#E74C3C", "formula": "C16H16N2O6S2", "mw": "396.44", "smiles": "CC(=O)OCC1=C(N2[C@@H]([C@@H](C2=O)NC(=O)CC3=CC=CS3)SC1)C(=O)O", "desc": "", "year": 1964, "gen": ""}, {"id": "DRUG_Cephaloridine", "label": "头孢噻啶\nCephaloridine", "title": "Cephaloridine", "type": "Drug", "cas": "50-59-9", "color": "#E74C3C", "formula": "C19H17N3O4S2", "mw": "415.48", "smiles": "", "desc": "", "year": 1964, "gen": ""}, {"id": "DRUG_Cephalexin", "label": "头孢氨苄\nCephalexin", "title": "Cephalexin", "type": "Drug", "cas": "15686-71-2", "color": "#E74C3C", "formula": "C16H17N3O4S", "mw": "347.39", "smiles": "CC1=C(N2[C@@H]([C@@H](C2=O)NC(=O)[C@@H](C3=CC=CC=C3)N)SC1)C(=O)O", "desc": "", "year": 1967, "gen": ""}, {"id": "DRUG_Cefazolin", "label": "头孢唑林\nCefazolin", "title": "Cefazolin", "type": "Drug", "cas": "25953-19-9", "color": "#E74C3C", "formula": "C14H14N8O4S3", "mw": "454.51", "smiles": "CC(=O)OCC1=C(N2[C@@H]([C@@H](C2=O)NC(=O)CN3C=NN=N3)SC1)C(=O)O", "desc": "", "year": 1971, "gen": ""}, {"id": "DRUG_Cefadroxil", "label": "头孢羟氨苄\nCefadroxil", "title": "Cefadroxil", "type": "Drug", "cas": "66592-87-8", "color": "#E74C3C", "formula": "C16H17N3O5S", "mw": "363.39", "smiles": "CC1=C(N2[C@@H]([C@@H](C2=O)NC(=O)[C@@H](C3=CC=C(C=C3)O)N)SC1)C(=O)O", "desc": "", "year": 1972, "gen": ""}, {"id": "DRUG_Cephradine", "label": "头孢拉定\nCephradine", "title": "Cephradine", "type": "Drug", "cas": "38821-53-3", "color": "#E74C3C", "formula": "C16H19N3O4S", "mw": "349.41", "smiles": "", "desc": "", "year": 1972, "gen": ""}, {"id": "DRUG_Cefamandole", "label": "头孢孟多\nCefamandole", "title": "Cefamandole", "type": "Drug", "cas": "34444-01-4", "color": "#E74C3C", "formula": "C18H18N6O5S2", "mw": "462.50", "smiles": "", "desc": "", "year": 1975, "gen": ""}, {"id": "DRUG_Cefuroxime", "label": "头孢呋辛\nCefuroxime", "title": "Cefuroxime", "type": "Drug", "cas": "55268-75-2", "color": "#E74C3C", "formula": "C16H16N4O8S", "mw": "424.39", "smiles": "CO/N=C(\\C(=O)NC1[C@@H]2N(C1=O)C(=C(CS2)COC(=O)N)C(=O)O)/C3=CC=CO3", "desc": "", "year": 1978, "gen": ""}, {"id": "DRUG_Cefoxitin", "label": "头孢西丁\nCefoxitin", "title": "Cefoxitin", "type": "Drug", "cas": "35607-66-0", "color": "#E74C3C", "formula": "C16H17N3O7S2", "mw": "427.45", "smiles": "", "desc": "", "year": 1978, "gen": ""}, {"id": "DRUG_Cefaclor", "label": "头孢克洛\nCefaclor", "title": "Cefaclor", "type": "Drug", "cas": "53994-73-3", "color": "#E74C3C", "formula": "C15H14ClN3O4S", "mw": "367.81", "smiles": "C1C(=C(N2[C@H](S1)[C@@H](C2=O)NC(=O)[C@@H](C3=CC=CC=C3)N)C(=O)O)Cl", "desc": "", "year": 1979, "gen": ""}, {"id": "DRUG_Cefprozil", "label": "头孢丙烯\nCefprozil", "title": "Cefprozil", "type": "Drug", "cas": "121123-17-9", "color": "#E74C3C", "formula": "C18H19N3O5S", "mw": "389.43", "smiles": "", "desc": "", "year": 1983, "gen": ""}, {"id": "DRUG_Cefovecin", "label": "头孢维星\nCefovecin", "title": "Cefovecin", "type": "Drug", "cas": "234096-34-1", "color": "#E74C3C", "formula": "C17H18N5NaO6S2", "mw": "475.48", "smiles": "", "desc": "兽用第3代头孢(Convenia)，7-ACCA母核，长效注射剂（一次注射持续14天）", "year": 2006, "gen": ""}, {"id": "DRUG_Cefotaxime", "label": "头孢噻肟\nCefotaxime", "title": "Cefotaxime", "type": "Drug", "cas": "63527-52-6", "color": "#E74C3C", "formula": "C16H17N5O7S2", "mw": "455.47", "smiles": "CO/N=C(\\C(=O)NC1[C@@H]2N(C1=O)C(=C(CS2)COC(=O)C)C(=O)O)/C3=CSC(=N3)N", "desc": "", "year": 1980, "gen": ""}, {"id": "DRUG_Ceftizoxime", "label": "头孢唑肟\nCeftizoxime", "title": "Ceftizoxime", "type": "Drug", "cas": "68401-82-1", "color": "#E74C3C", "formula": "C13H13N5O5S2", "mw": "383.40", "smiles": "", "desc": "", "year": 1980, "gen": ""}, {"id": "DRUG_Ceftriaxone", "label": "头孢曲松\nCeftriaxone", "title": "Ceftriaxone", "type": "Drug", "cas": "73384-59-5", "color": "#E74C3C", "formula": "C18H18N8O7S3", "mw": "554.58", "smiles": "CO/N=C(\\C(=O)NC1[C@@H]2N(C1=O)C(=C(CS2)CSC3=NC(=O)C(=O)NN3C)C(=O)O)/C4=CSC(=N4)N", "desc": "", "year": 1982, "gen": ""}, {"id": "DRUG_Ceftazidime", "label": "头孢他啶\nCeftazidime", "title": "Ceftazidime", "type": "Drug", "cas": "72558-82-8", "color": "#E74C3C", "formula": "C22H22N6O7S2", "mw": "546.58", "smiles": "CC(C)(C(=O)O)O/N=C(\\C(=O)NC1[C@@H]2N(C1=O)C(=C(CS2)C[N+]3=CC=CC=C3)C(=O)[O-])/C4=CSC(=N4)N", "desc": "", "year": 1983, "gen": ""}, {"id": "DRUG_Cefoperazone", "label": "头孢哌酮\nCefoperazone", "title": "Cefoperazone", "type": "Drug", "cas": "62893-20-3", "color": "#E74C3C", "formula": "C25H27N9O8S2", "mw": "645.67", "smiles": "", "desc": "", "year": 1981, "gen": ""}, {"id": "DRUG_Cefixime", "label": "头孢克肟\nCefixime", "title": "Cefixime", "type": "Drug", "cas": "79350-37-1", "color": "#E74C3C", "formula": "C16H15N5O7S2", "mw": "453.45", "smiles": "C=CC1=C(N2[C@@H]([C@@H](C2=O)NC(=O)/C(=N\\OC)/C3=CSC(=N3)N)SC1)C(=O)O", "desc": "", "year": 1987, "gen": ""}, {"id": "DRUG_Cefpodoxime", "label": "头孢泊肟酯\nCefpodoxime Proxetil", "title": "Cefpodoxime Proxetil", "type": "Drug", "cas": "87239-81-4", "color": "#E74C3C", "formula": "C21H27N5O9S2", "mw": "557.60", "smiles": "", "desc": "", "year": 1990, "gen": ""}, {"id": "DRUG_Cefdinir", "label": "头孢地尼\nCefdinir", "title": "Cefdinir", "type": "Drug", "cas": "91832-40-5", "color": "#E74C3C", "formula": "C14H13N5O5S2", "mw": "395.42", "smiles": "C=CC1=C(N2[C@@H]([C@@H](C2=O)NC(=O)/C(=N\\O)/C3=CSC(=N3)N)SC1)C(=O)O", "desc": "", "year": 1991, "gen": ""}, {"id": "DRUG_Ceftibuten", "label": "头孢布烯\nCeftibuten", "title": "Ceftibuten", "type": "Drug", "cas": "97519-39-6", "color": "#E74C3C", "formula": "C15H14N4O6S2", "mw": "410.42", "smiles": "", "desc": "", "year": 1992, "gen": ""}, {"id": "DRUG_Cefepime", "label": "头孢吡肟\nCefepime", "title": "Cefepime", "type": "Drug", "cas": "88040-23-7", "color": "#E74C3C", "formula": "C19H24N6O5S2", "mw": "480.56", "smiles": "CO/N=C(\\C(=O)NC1[C@@H]2N(C1=O)C(=C(CS2)C[N+]3(CCCC3)C)C(=O)[O-])/C4=CSC(=N4)N", "desc": "", "year": 1993, "gen": ""}, {"id": "DRUG_Cefpirome", "label": "头孢匹罗\nCefpirome", "title": "Cefpirome", "type": "Drug", "cas": "84957-29-9", "color": "#E74C3C", "formula": "C22H22N6O5S2", "mw": "514.58", "smiles": "", "desc": "", "year": 1994, "gen": ""}, {"id": "DRUG_Ceftaroline", "label": "头孢洛林酯\nCeftaroline Fosamil", "title": "Ceftaroline Fosamil", "type": "Drug", "cas": "400827-46-5", "color": "#E74C3C", "formula": "C22H21N8O8PS4", "mw": "684.68", "smiles": "", "desc": "抗MRSA头孢，前药形式，FDA 2010年批准（cABSSSI/CAP）", "year": 2010, "gen": ""}, {"id": "DRUG_Ceftobiprole", "label": "头孢比普酯\nCeftobiprole Medocaril", "title": "Ceftobiprole Medocaril", "type": "Drug", "cas": "376653-43-9", "color": "#E74C3C", "formula": "C26H26N8O11S2", "mw": "690.67", "smiles": "", "desc": "抗MRSA/抗假单胞菌双重活性，EMA 2013年批准", "year": 2013, "gen": ""}];
+const linksData = [{"source": "GEN_1", "target": "GEN_2", "relationship": "EVOLVED_TO", "color": "#2ECC71", "detail": "第2代在G-谱/β-内酰胺酶稳定性上迭代升级"}, {"source": "GEN_2", "target": "GEN_3", "relationship": "EVOLVED_TO", "color": "#2ECC71", "detail": "第3代在G-谱/β-内酰胺酶稳定性上迭代升级"}, {"source": "GEN_3", "target": "GEN_4", "relationship": "EVOLVED_TO", "color": "#2ECC71", "detail": "第4代在G-谱/β-内酰胺酶稳定性上迭代升级"}, {"source": "GEN_4", "target": "GEN_5", "relationship": "EVOLVED_TO", "color": "#2ECC71", "detail": "第5代在G-谱/β-内酰胺酶稳定性上迭代升级"}, {"source": "INT_7-ACA", "target": "INT_7-ADCA", "relationship": "HYDROGENOLYSIS", "color": "#1ABC9C", "detail": "催化氢解脱3-乙酰氧基"}, {"source": "INT_7-ACA", "target": "DRUG_Cefazolin", "relationship": "SYNTHESIZED_FROM", "color": "#E74C3C", "detail": "C3位噻二唑硫醇取代+7位四氮唑乙酸酰化"}, {"source": "INT_7-ACA", "target": "DRUG_Cefamandole", "relationship": "SYNTHESIZED_FROM", "color": "#E74C3C", "detail": "O-甲酰扁桃酸活性酯"}, {"source": "INT_7-ACA", "target": "DRUG_Cefotaxime", "relationship": "SYNTHESIZED_FROM", "color": "#E74C3C", "detail": "氨噻肟酸活性酯+7-ACA→7-ACT→C3亲核取代"}, {"source": "INT_7-ACA", "target": "DRUG_Ceftriaxone", "relationship": "SYNTHESIZED_FROM", "color": "#E74C3C", "detail": "C3引入三嗪二酮环（独特结构）"}, {"source": "INT_7-ACA", "target": "DRUG_Ceftazidime", "relationship": "SYNTHESIZED_FROM", "color": "#E74C3C", "detail": "C3吡啶鎓取代（抗假单胞菌关键）"}, {"source": "INT_7-ACA", "target": "DRUG_Cefepime", "relationship": "SYNTHESIZED_FROM", "color": "#E74C3C", "detail": "C3 N-甲基吡咯烷取代（两性离子）"}, {"source": "INT_7-ACA", "target": "DRUG_Cefpirome", "relationship": "SYNTHESIZED_FROM", "color": "#E74C3C", "detail": "C3 环戊烯并吡啶取代"}, {"source": "INT_7-ADCA", "target": "DRUG_Cephalexin", "relationship": "SYNTHESIZED_FROM", "color": "#E74C3C", "detail": "Dane盐法/DCC+HOBt"}, {"source": "INT_7-ADCA", "target": "DRUG_Cefadroxil", "relationship": "SYNTHESIZED_FROM", "color": "#E74C3C", "detail": "活性酯法"}, {"source": "INT_7-ADCA", "target": "DRUG_Cefprozil", "relationship": "SYNTHESIZED_FROM", "color": "#E74C3C", "detail": "Dane盐法"}, {"source": "INT_GCLE", "target": "DRUG_Cefixime", "relationship": "SYNTHESIZED_FROM", "color": "#E74C3C", "detail": "氨噻肟酸侧链+C3乙烯基引入"}, {"source": "INT_GCLE", "target": "DRUG_Cefdinir", "relationship": "SYNTHESIZED_FROM", "color": "#E74C3C", "detail": "氨噻肟酸侧链+C3乙烯基→噻唑环"}, {"source": "INT_GCLE", "target": "DRUG_Cefpodoxime", "relationship": "SYNTHESIZED_FROM", "color": "#E74C3C", "detail": "前药酯化（proxetil）"}, {"source": "INT_7-ACCA", "target": "DRUG_Cefaclor", "relationship": "SYNTHESIZED_FROM", "color": "#E74C3C", "detail": "7-ACCA + D-苯甘氨酸 → 活性酯缩合 → 头孢克洛"}, {"source": "INT_7-ACCA", "target": "DRUG_Cefovecin", "relationship": "SYNTHESIZED_FROM", "color": "#E74C3C", "detail": "7-ACCA + 氨噻肟酸衍生物 → 活性酯缩合 → 头孢维星钠"}, {"source": "INT_PenG", "target": "INT_7-ADCA", "relationship": "RING_EXPANSION", "color": "#9B59B6", "detail": "青霉素亚砜扩环重排→脱侧链"}, {"source": "INT_PenG", "target": "INT_7-ACCA", "relationship": "RING_EXPANSION_CHLORINATION", "color": "#8E44AD", "detail": "青霉素工业盐→亚砜酯→扩环重排→C3氯代→脱侧链→7-ACCA"}, {"source": "INT_PenG", "target": "INT_GCLE", "relationship": "RING_EXPANSION_CHLORINATION", "color": "#8E44AD", "detail": "氧化成亚砜→扩环重排→PMB酯化→C3氯代"}, {"source": "INT_CephC", "target": "INT_7-ACA", "relationship": "ENZYMATIC_CLEAVAGE", "color": "#3498DB", "detail": "D-氨基酸氧化酶+戊二酰酰基转移酶两步酶解"}, {"source": "SCA_Phenylglycine", "target": "DRUG_Cephalexin", "relationship": "SIDE_CHAIN_OF", "color": "#F39C12", "detail": ""}, {"source": "SCA_Phenylglycine", "target": "DRUG_Cefaclor", "relationship": "SIDE_CHAIN_OF", "color": "#F39C12", "detail": ""}, {"source": "SCA_DHPC", "target": "DRUG_Cefadroxil", "relationship": "SIDE_CHAIN_OF", "color": "#F39C12", "detail": ""}, {"source": "SCA_DHPC", "target": "DRUG_Cefprozil", "relationship": "SIDE_CHAIN_OF", "color": "#F39C12", "detail": ""}, {"source": "SCA_Tetrazole", "target": "DRUG_Cefazolin", "relationship": "SIDE_CHAIN_OF", "color": "#F39C12", "detail": ""}, {"source": "SCA_Thiazole", "target": "DRUG_Cefovecin", "relationship": "SIDE_CHAIN_OF", "color": "#F39C12", "detail": ""}, {"source": "SCA_Thiazole", "target": "DRUG_Cefotaxime", "relationship": "SIDE_CHAIN_OF", "color": "#F39C12", "detail": ""}, {"source": "SCA_Thiazole", "target": "DRUG_Ceftriaxone", "relationship": "SIDE_CHAIN_OF", "color": "#F39C12", "detail": ""}, {"source": "SCA_Thiazole", "target": "DRUG_Ceftazidime", "relationship": "SIDE_CHAIN_OF", "color": "#F39C12", "detail": ""}, {"source": "SCA_Thiazole", "target": "DRUG_Cefepime", "relationship": "SIDE_CHAIN_OF", "color": "#F39C12", "detail": ""}, {"source": "SCA_Thiazole", "target": "DRUG_Cefpirome", "relationship": "SIDE_CHAIN_OF", "color": "#F39C12", "detail": ""}, {"source": "SCA_ATMA", "target": "DRUG_Cefixime", "relationship": "SIDE_CHAIN_OF", "color": "#F39C12", "detail": ""}, {"source": "SCA_ATMA", "target": "DRUG_Cefdinir", "relationship": "SIDE_CHAIN_OF", "color": "#F39C12", "detail": ""}, {"source": "SCA_ATMA", "target": "DRUG_Cefpodoxime", "relationship": "SIDE_CHAIN_OF", "color": "#F39C12", "detail": ""}, {"source": "SCA_Mandelic", "target": "DRUG_Cefamandole", "relationship": "SIDE_CHAIN_OF", "color": "#F39C12", "detail": ""}, {"source": "DRUG_Cephalothin", "target": "GEN_1", "relationship": "BELONGS_TO_GENERATION", "color": "#95A5A6", "detail": ""}, {"source": "DRUG_Cephaloridine", "target": "GEN_1", "relationship": "BELONGS_TO_GENERATION", "color": "#95A5A6", "detail": ""}, {"source": "DRUG_Cephalexin", "target": "GEN_1", "relationship": "BELONGS_TO_GENERATION", "color": "#95A5A6", "detail": ""}, {"source": "DRUG_Cefazolin", "target": "GEN_1", "relationship": "BELONGS_TO_GENERATION", "color": "#95A5A6", "detail": ""}, {"source": "DRUG_Cefadroxil", "target": "GEN_1", "relationship": "BELONGS_TO_GENERATION", "color": "#95A5A6", "detail": ""}, {"source": "DRUG_Cephradine", "target": "GEN_1", "relationship": "BELONGS_TO_GENERATION", "color": "#95A5A6", "detail": ""}, {"source": "DRUG_Cefamandole", "target": "GEN_2", "relationship": "BELONGS_TO_GENERATION", "color": "#95A5A6", "detail": ""}, {"source": "DRUG_Cefuroxime", "target": "GEN_2", "relationship": "BELONGS_TO_GENERATION", "color": "#95A5A6", "detail": ""}, {"source": "DRUG_Cefoxitin", "target": "GEN_2", "relationship": "BELONGS_TO_GENERATION", "color": "#95A5A6", "detail": ""}, {"source": "DRUG_Cefaclor", "target": "GEN_2", "relationship": "BELONGS_TO_GENERATION", "color": "#95A5A6", "detail": ""}, {"source": "DRUG_Cefprozil", "target": "GEN_2", "relationship": "BELONGS_TO_GENERATION", "color": "#95A5A6", "detail": ""}, {"source": "DRUG_Cefovecin", "target": "GEN_2", "relationship": "BELONGS_TO_GENERATION", "color": "#95A5A6", "detail": ""}, {"source": "DRUG_Cefotaxime", "target": "GEN_3", "relationship": "BELONGS_TO_GENERATION", "color": "#95A5A6", "detail": ""}, {"source": "DRUG_Ceftizoxime", "target": "GEN_3", "relationship": "BELONGS_TO_GENERATION", "color": "#95A5A6", "detail": ""}, {"source": "DRUG_Ceftriaxone", "target": "GEN_3", "relationship": "BELONGS_TO_GENERATION", "color": "#95A5A6", "detail": ""}, {"source": "DRUG_Ceftazidime", "target": "GEN_3", "relationship": "BELONGS_TO_GENERATION", "color": "#95A5A6", "detail": ""}, {"source": "DRUG_Cefoperazone", "target": "GEN_3", "relationship": "BELONGS_TO_GENERATION", "color": "#95A5A6", "detail": ""}, {"source": "DRUG_Cefixime", "target": "GEN_3", "relationship": "BELONGS_TO_GENERATION", "color": "#95A5A6", "detail": ""}, {"source": "DRUG_Cefpodoxime", "target": "GEN_3", "relationship": "BELONGS_TO_GENERATION", "color": "#95A5A6", "detail": ""}, {"source": "DRUG_Cefdinir", "target": "GEN_3", "relationship": "BELONGS_TO_GENERATION", "color": "#95A5A6", "detail": ""}, {"source": "DRUG_Ceftibuten", "target": "GEN_3", "relationship": "BELONGS_TO_GENERATION", "color": "#95A5A6", "detail": ""}, {"source": "DRUG_Cefepime", "target": "GEN_4", "relationship": "BELONGS_TO_GENERATION", "color": "#95A5A6", "detail": ""}, {"source": "DRUG_Cefpirome", "target": "GEN_4", "relationship": "BELONGS_TO_GENERATION", "color": "#95A5A6", "detail": ""}, {"source": "DRUG_Ceftaroline", "target": "GEN_5", "relationship": "BELONGS_TO_GENERATION", "color": "#95A5A6", "detail": ""}, {"source": "DRUG_Ceftobiprole", "target": "GEN_5", "relationship": "BELONGS_TO_GENERATION", "color": "#95A5A6", "detail": ""}];
+
+let svg = d3.select("#graph"),
+    width = window.innerWidth,
+    height = window.innerHeight;
+
+const g = svg.append("g");
+
+// Zoom
+const zoom = d3.zoom().scaleExtent([0.1, 4]).on("zoom", (event) => g.attr("transform", event.transform));
+svg.call(zoom);
+
+// Force simulation
+const simulation = d3.forceSimulation(nodesData)
+    .force("link", d3.forceLink(linksData).id(d => d.id).distance(120))
+    .force("charge", d3.forceManyBody().strength(-400))
+    .force("center", d3.forceCenter(width / 2, height / 2))
+    .force("collision", d3.forceCollide(30));
+
+// Arrow markers
+const defs = svg.append("defs");
+linksData.forEach((l, i) => {
+    defs.append("marker")
+        .attr("id", "arrow-" + i)
+        .attr("viewBox", "0 -5 10 10")
+        .attr("refX", 22)
+        .attr("refY", 0)
+        .attr("markerWidth", 6)
+        .attr("markerHeight", 6)
+        .attr("orient", "auto")
+        .append("path")
+        .attr("d", "M0,-5L10,0L0,5")
+        .attr("fill", l.color);
+});
+
+// Links
+const link = g.append("g").selectAll("line")
+    .data(linksData).join("line")
+    .attr("stroke", d => d.color)
+    .attr("stroke-width", 1.5)
+    .attr("stroke-opacity", 0.6)
+    .attr("marker-end", (d, i) => "url(#arrow-" + i + ")");
+
+// Nodes
+const node = g.append("g").selectAll("g")
+    .data(nodesData).join("g")
+    .call(d3.drag()
+        .on("start", dragstarted)
+        .on("drag", dragged)
+        .on("end", dragended));
+
+// Drug nodes = larger
+node.append("circle")
+    .attr("r", d => d.type === "Drug" ? 14 : d.type === "Generation" ? 18 : d.type === "Core Intermediate" ? 11 : 8)
+    .attr("fill", d => d.color)
+    .attr("stroke", "#fff")
+    .attr("stroke-width", 1.5)
+    .style("cursor", "pointer")
+    .on("click", (event, d) => { highlightConnected(event, d); showDetail(d); })
+    .on("mouseover", showTooltip)
+    .on("mouseout", hideTooltip);
+
+// Node labels
+node.append("text")
+    .text(d => d.label.split("\n")[0])
+    .attr("font-size", d => d.type === "Generation" ? 13 : d.type === "Drug" ? 10 : 9)
+    .attr("font-family", "Microsoft YaHei, sans-serif")
+    .attr("dx", 18)
+    .attr("dy", 4)
+    .attr("fill", "#333")
+    .style("pointer-events", "none");
+
+node.append("text")
+    .text(d => {
+        const parts = d.label.split("\n");
+        return parts.length > 1 ? parts[1] : "";
+    })
+    .attr("font-size", 8)
+    .attr("font-family", "Consolas, monospace")
+    .attr("dx", 18)
+    .attr("dy", 16)
+    .attr("fill", "#999")
+    .style("pointer-events", "none");
+
+// Link labels
+const linkLabel = g.append("g").selectAll("text")
+    .data(linksData).join("text")
+    .text(d => d.relationship)
+    .attr("font-size", 7)
+    .attr("fill", "#aaa")
+    .attr("text-anchor", "middle")
+    .attr("dy", -5)
+    .style("pointer-events", "none");
+
+simulation.on("tick", () => {
+    link.attr("x1", d => d.source.x)
+        .attr("y1", d => d.source.y)
+        .attr("x2", d => d.target.x)
+        .attr("y2", d => d.target.y);
+    node.attr("transform", d => `translate(${d.x},${d.y})`);
+    linkLabel.attr("x", d => (d.source.x + d.target.x) / 2)
+        .attr("y", d => (d.source.y + d.target.y) / 2);
+});
+
+// Drag functions
+function dragstarted(event, d) { if (!event.active) simulation.alphaTarget(0.3).restart(); d.fx = d.x; d.fy = d.y; }
+function dragged(event, d) { d.fx = event.x; d.fy = event.y; }
+function dragended(event, d) { if (!event.active) simulation.alphaTarget(0); d.fx = null; d.fy = null; }
+
+// Tooltip
+const tooltip = d3.select("#tooltip");
+function showTooltip(event, d) {
+    tooltip.classed("visible", true)
+        .style("left", (event.pageX + 15) + "px")
+        .style("top", (event.pageY - 10) + "px")
+        .html(`<div class="tt-title">${d.label.replace(/\n/g, " ")}</div>
+               <div class="tt-row"><span class="tt-label">类型</span><span>${d.type}</span></div>
+               ${d.cas ? `<div class="tt-row"><span class="tt-label">CAS</span><span>${d.cas}</span></div>` : ""}
+               ${d.formula ? `<div class="tt-row"><span class="tt-label">分子式</span><span>${d.formula}</span></div>` : ""}
+               ${d.mw ? `<div class="tt-row"><span class="tt-label">分子量</span><span>${d.mw}</span></div>` : ""}
+               ${d.year ? `<div class="tt-row"><span class="tt-label">上市年份</span><span>${d.year}</span></div>` : ""}
+               ${d.gen ? `<div class="tt-row"><span class="tt-label">代际</span><span>第${d.gen}代</span></div>` : ""}
+               ${d.desc ? `<div style="margin-top:6px;color:#ccc;">${d.desc}</div>` : ""}`);
+}
+function hideTooltip() { tooltip.classed("visible", false); }
+
+function showDetail(d) {
+    if (d.type === "Drug" && d.smiles) {
+        alert(d.label + "\n\n分子式: " + d.formula + "\n分子量: " + d.mw + "\nSMILES: " + d.smiles);
+    }
+}
+
+function resetZoom() { svg.transition().duration(500).call(zoom.transform, d3.zoomIdentity); }
+
+function filterGen(gen) {
+    if (gen === 'all') {
+        node.selectAll("circle").attr("opacity", 1);
+        link.attr("opacity", 0.6);
+        node.selectAll("text").attr("opacity", 1);
+        linkLabel.attr("opacity", 0.7);
+    } else {
+        const genId = "GEN_" + gen;
+        node.selectAll("circle").attr("opacity", d => {
+            if (d.type === "Generation" && d.id === genId) return 1;
+            if (d.type === "Core Intermediate" || d.type === "Starting Material" || d.type === "Side Chain Acid") return 0.3;
+            return 0.3;
+        });
+        link.attr("opacity", 0.3);
+        linkLabel.attr("opacity", 0.3);
+        node.selectAll("text").attr("opacity", d => d.type === "Generation" && d.id === genId ? 1 : 0.3);
+        // Highlight connected drug nodes
+        const connectedDrugs = new Set();
+        linksData.forEach(l => { if (l.target === genId && nodesData.find(n => n.id === l.source && n.type === "Drug")) connectedDrugs.add(l.source); });
+        node.selectAll("circle").attr("opacity", d => connectedDrugs.has(d.id) ? 1 : 
+            (d.id === genId ? 1 : (d.type === "Core Intermediate" || d.type === "Starting Material" || d.type === "Side Chain Acid") ? 0.3 : 0.15));
+    }
+}
+
+function highlightIntermediates() {
+    node.selectAll("circle").attr("opacity", d => 
+        d.type === "Core Intermediate" || d.type === "Starting Material" ? 1 : 0.15);
+    link.attr("opacity", 0.2);
+    linkLabel.attr("opacity", 0.2);
+}
+
+// Click node to highlight connected subgraph
+function highlightConnected(event, d) {
+    event.stopPropagation();
+    const connected = new Set([d.id]);
+    linksData.forEach(l => {
+        const s = l.source.id || l.source, t = l.target.id || l.target;
+        if (s === d.id) connected.add(t);
+        if (t === d.id) connected.add(s);
+    });
+    node.selectAll("circle").transition().duration(300)
+        .attr("opacity", nd => connected.has(nd.id) ? 1 : 0.06);
+    node.selectAll("text").transition().duration(300)
+        .attr("opacity", nd => connected.has(nd.id) ? 1 : 0.06);
+    link.transition().duration(300)
+        .attr("stroke-opacity", l => {
+            const s = l.source.id || l.source, t = l.target.id || l.target;
+            return (connected.has(s) && connected.has(t)) ? 0.9 : 0.02;
+        })
+        .attr("stroke-width", l => {
+            const s = l.source.id || l.source, t = l.target.id || l.target;
+            return (connected.has(s) && connected.has(t)) ? 3 : 0.5;
+        });
+    linkLabel.transition().duration(300)
+        .attr("opacity", l => {
+            const s = l.source.id || l.source, t = l.target.id || l.target;
+            return (connected.has(s) && connected.has(t)) ? 1 : 0;
+        });
+}
+function resetHighlight() {
+    node.selectAll("circle").transition().duration(300).attr("opacity", 1);
+    node.selectAll("text").transition().duration(300).attr("opacity", 1);
+    link.transition().duration(300).attr("stroke-opacity", 0.6).attr("stroke-width", 1.5);
+    linkLabel.transition().duration(300).attr("opacity", 0.7);
+}
+function restoreAll() {
+    resetZoom();
+    resetHighlight();
+    filterGen('all');
+}
+
+// Click background (anywhere outside nodes/buttons) to restore
+document.addEventListener('click', function(e) {
+    if (e.target.tagName === 'svg' || e.target.tagName === 'body' || e.target.id === 'graph') {
+        restoreAll();
+    }
+});
+</script>
+</body>
+</html>

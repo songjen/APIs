@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>他汀类药物知识图谱 — Statin Knowledge Graph</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:"Microsoft YaHei",sans-serif;background:#f5f6fa;overflow:hidden}
+#header{position:absolute;top:0;left:0;right:0;height:60px;background:linear-gradient(135deg,#2c3e50,#e67e22);color:white;display:flex;align-items:center;padding:0 24px;z-index:100;box-shadow:0 2px 10px rgba(0,0,0,0.2)}
+#header h1{font-size:20px;font-weight:600}
+#header .sub{font-size:13px;opacity:0.8;margin-left:12px}
+#legend{position:absolute;top:80px;left:16px;background:white;border-radius:8px;padding:12px 16px;box-shadow:0 2px 8px rgba(0,0,0,0.1);z-index:100;font-size:13px}
+#legend .item{display:flex;align-items:center;margin:4px 0}
+#legend .dot{width:12px;height:12px;border-radius:50%;margin-right:8px;flex-shrink:0}
+#tooltip{position:absolute;background:rgba(44,62,80,0.95);color:white;padding:12px 16px;border-radius:8px;font-size:13px;pointer-events:none;opacity:0;transition:opacity .2s;z-index:200;max-width:360px;line-height:1.5}
+#tooltip.show{opacity:1}
+#tooltip .tt-title{font-size:15px;font-weight:600;margin-bottom:4px}
+#tooltip .tt-row{display:flex;justify-content:space-between;gap:16px}
+#tooltip .tt-label{color:#bdc3c7}
+#controls{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);background:white;border-radius:24px;padding:8px 16px;box-shadow:0 2px 8px rgba(0,0,0,0.15);z-index:100;display:flex;gap:8px}
+#controls button{border:1px solid #ddd;background:white;padding:6px 14px;border-radius:16px;cursor:pointer;font-size:12px;color:#555;transition:all .2s}
+#controls button:hover{background:#e67e22;color:white;border-color:#e67e22}
+#info-panel{position:absolute;top:80px;right:16px;background:white;border-radius:8px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,0.1);z-index:100;font-size:12px;color:#666;max-width:240px}
+#info-panel b{color:#2c3e50}
+svg{width:100vw;height:100vh}
+</style>
+</head>
+<body>
+<div id="header"><h1>💊 他汀类药物知识图谱</h1><span class="sub">Statin HMG-CoA Reductase Inhibitors | 1-3代 · 中间体 · 合成路线 · CAS</span></div>
+<div id="legend">
+<div class="item"><div class="dot" style="background:#E74C3C"></div>药物 Drug</div>
+<div class="item"><div class="dot" style="background:#3498DB"></div>核心中间体 Core Intermediate</div>
+<div class="item"><div class="dot" style="background:#2ECC71"></div>代际 Generation</div>
+<div class="item"><div class="dot" style="background:#F39C12"></div>侧链/试剂 Side Chain</div>
+</div>
+<div id="info-panel">节点: <b>21</b> &nbsp; 边: <b>23</b><br>覆盖 <b>3</b> 代他汀药物<br>含 <b>8</b> 个药物分子<br><small>拖拽节点 · 滚轮缩放</small></div>
+<div id="tooltip"></div>
+<div id="controls">
+<button onclick="resetZoom()">🔄 重置</button>
+<button onclick="filterGen('all')">全部</button>
+<button onclick="filterGen(1)">第1代</button>
+<button onclick="filterGen(2)">第2代</button>
+<button onclick="filterGen(3)">第3代</button>
+<button onclick="filterIntermediates()">🔬 中间体</button>
+</div>
+<svg id="graph"></svg>
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<script>
+// Click node to highlight connections
+let highlightedNode=null;
+function highlightConnections(event,d){
+  highlightedNode=d.id;
+  const connected=new Set([d.id]);
+  linksData.forEach(l=>{
+    const s=l.source.id||l.source, t=l.target.id||l.target;
+    if(s===d.id)connected.add(t);if(t===d.id)connected.add(s);
+  });
+  node.selectAll("circle").transition().duration(300).attr("opacity",nd=>connected.has(nd.id)?1:0.08);
+  node.selectAll("text").transition().duration(300).attr("opacity",nd=>connected.has(nd.id)?1:0.08);
+  link.transition().duration(300)
+    .attr("stroke-opacity",l=>{const s=l.source.id||l.source, t=l.target.id||l.target;return(connected.has(s)&&connected.has(t))?0.9:0.03;})
+    .attr("stroke-width",l=>{const s=l.source.id||l.source, t=l.target.id||l.target;return(connected.has(s)&&connected.has(t))?3:0.5;});
+  ll.transition().duration(300).attr("opacity",l=>{const s=l.source.id||l.source, t=l.target.id||l.target;return(connected.has(s)&&connected.has(t))?1:0;});
+  event.stopPropagation();
+}
+function resetHighlight(){
+  highlightedNode=null;
+  node.selectAll("circle").transition().duration(300).attr("opacity",1);
+  node.selectAll("text").transition().duration(300).attr("opacity",1);
+  link.transition().duration(300).attr("stroke-opacity",0.6).attr("stroke-width",1.5);
+  ll.transition().duration(300).attr("opacity",0.7);
+}
+</script>
+<script>
+const nodesData=[{"id": "GEN_S1", "label": "1st Gen - Natural", "title": "1st Gen - Natural", "type": "Generation", "color": "#2ECC71", "cas": "", "formula": "", "mw": "", "smiles": "", "desc": "", "year": "", "gen": "1", "source": ""}, {"id": "GEN_S2", "label": "2nd Gen - Synthetic", "title": "2nd Gen - Synthetic", "type": "Generation", "color": "#2ECC71", "cas": "", "formula": "", "mw": "", "smiles": "", "desc": "", "year": "", "gen": "2", "source": ""}, {"id": "GEN_S3", "label": "3rd Gen - High-Potency", "title": "3rd Gen - High-Potency", "type": "Generation", "color": "#2ECC71", "cas": "", "formula": "", "mw": "", "smiles": "", "desc": "", "year": "", "gen": "3", "source": ""}, {"id": "INT_Lovastatin_Acid", "label": "洛伐他汀酸", "title": "Lovastatin Acid", "type": "Core Intermediate", "color": "#3498DB", "cas": "", "formula": "C24H38O6", "mw": "422.56", "smiles": "CC[C@H](C)C(=O)O[C@H]1[C@@H](C[C@@H]2C[C@@H](O)CC(=O)O2)C=CC=C[C@@H](C)C[C@H](C)C1", "desc": "洛伐他汀内酯开环产物，活性形式", "year": "", "gen": "", "source": ""}, {"id": "INT_MonacolinJ", "label": "莫那可林 J", "title": "Monacolin J", "type": "Core Intermediate", "color": "#3498DB", "cas": "", "formula": "C19H30O4", "mw": "322.44", "smiles": "", "desc": "洛伐他汀水解脱2-甲基丁酰侧链产物，辛伐他汀合成关键前体", "year": "", "gen": "", "source": ""}, {"id": "INT_Mevastatin_Acid", "label": "美伐他汀酸", "title": "Mevastatin Acid", "type": "Core Intermediate", "color": "#3498DB", "cas": "", "formula": "C23H36O6", "mw": "408.53", "smiles": "", "desc": "美伐他汀（Compactin）内酯开环产物，经微生物羟化得普伐他汀", "year": "", "gen": "", "source": ""}, {"id": "INT_ATS8", "label": "阿托伐他汀酮酯中间体", "title": "ATS-8 / DKT", "type": "Core Intermediate", "color": "#3498DB", "cas": "", "formula": "C14H27NO4", "mw": "273.37", "smiles": "", "desc": "阿托伐他汀手性侧链关键砌块，Paal-Knorr缩合→内酰胺化", "year": "", "gen": "", "source": ""}, {"id": "INT_Rosu_Pyr", "label": "瑞舒伐他汀嘧啶母核", "title": "Rosuvastatin Pyrimidine Core", "type": "Core Intermediate", "color": "#3498DB", "cas": "", "formula": "C17H20FN3O3S", "mw": "365.42", "smiles": "", "desc": "瑞舒伐他汀嘧啶醛核心，经Wittig烯烃化→侧链偶联", "year": "", "gen": "", "source": ""}, {"id": "INT_Pitava_Quin", "label": "匹伐他汀喹啉母核", "title": "Pitavastatin Quinoline Core", "type": "Core Intermediate", "color": "#3498DB", "cas": "", "formula": "", "mw": "", "smiles": "", "desc": "4-对氟苯基喹啉母核，经Wittig-Horner与手性侧链偶联", "year": "", "gen": "", "source": ""}, {"id": "INT_Dicyclohexylamine", "label": "二环己胺盐", "title": "Dicyclohexylamine Salt", "type": "Side Chain / Reagent", "color": "#F39C12", "cas": "", "formula": "", "mw": "", "smiles": "", "desc": "普伐他汀钠盐制备中的结晶纯化试剂", "year": "", "gen": "", "source": ""}, {"id": "SCA_DMBA", "label": "2,2-二甲基丁酰氯", "title": "2,2-Dimethylbutyryl Chloride", "type": "Side Chain / Reagent", "color": "#F39C12", "cas": "", "formula": "", "mw": "", "smiles": "", "desc": "与Monacolin J C8位羟基酰化引入辛伐他汀侧链", "year": "", "gen": "", "source": ""}, {"id": "SCA_Diketone", "label": "二酮中间体", "title": "Diketone Intermediate (DKT)", "type": "Side Chain / Reagent", "color": "#F39C12", "cas": "", "formula": "", "mw": "", "smiles": "", "desc": "1,4-二酮与苄胺缩合→Paal-Knorr吡咯环合成", "year": "", "gen": "", "source": ""}, {"id": "SCA_Wittig_Ylide", "label": "Wittig磷叶立德试剂", "title": "Wittig Phosphonium Ylide", "type": "Side Chain / Reagent", "color": "#F39C12", "cas": "", "formula": "", "mw": "", "smiles": "", "desc": "用于嘧啶/喹啉醛→α,β-不饱和酯的Wittig烯烃化", "year": "", "gen": "", "source": ""}, {"id": "DRUG_Mevastatin", "label": "美伐他汀", "title": "Mevastatin", "type": "Drug", "color": "#E74C3C", "cas": "73573-88-3", "formula": "C23H34O5", "mw": "390.51", "smiles": "CC[C@H](C)C(=O)O[C@H]1[C@@H](C[C@@H]2C[C@@H](O)CC(=O)O2)C=CC=C[C@@H](C)C[C@H](C)C1", "desc": "第一个发现的他汀(Compactin)，未商业化但为后续奠定基础", "year": "1979", "gen": "", "source": "Penicillium citrinum发酵"}, {"id": "DRUG_Lovastatin", "label": "洛伐他汀", "title": "Lovastatin", "type": "Drug", "color": "#E74C3C", "cas": "75330-75-5", "formula": "C24H36O5", "mw": "404.54", "smiles": "CC[C@H](C)C(=O)O[C@H]1[C@@H](C[C@@H]2C[C@@H](O)CC(=O)O2)C=CC=C[C@@H](C)C[C@H](C)C1", "desc": "首个FDA批准的他汀，商品名Mevacor，曲霉发酵生产", "year": "1987", "gen": "", "source": "Aspergillus terreus发酵"}, {"id": "DRUG_Pravastatin", "label": "普伐他汀", "title": "Pravastatin", "type": "Drug", "color": "#E74C3C", "cas": "81093-37-0", "formula": "C23H36O7", "mw": "424.53", "smiles": "", "desc": "美伐他汀经微生物羟化产物，水溶性好，不依赖CYP代谢", "year": "1989", "gen": "", "source": "Mevastatin → 微生物羟化转化"}, {"id": "DRUG_Simvastatin", "label": "辛伐他汀", "title": "Simvastatin", "type": "Drug", "color": "#E74C3C", "cas": "79902-63-9", "formula": "C25H38O5", "mw": "418.57", "smiles": "CCC(C)(C)C(=O)O[C@H]1[C@@H](C[C@@H]2C[C@@H](O)CC(=O)O2)C=CC=C[C@@H](C)C[C@H](C)C1", "desc": "洛伐他汀半合成衍生物（Monacolin J + DMBA 酰化），活性增强2-3倍", "year": "1988", "gen": "", "source": "Lovastatin → Monacolin J → DMBA酰化"}, {"id": "DRUG_Fluvastatin", "label": "氟伐他汀", "title": "Fluvastatin", "type": "Drug", "color": "#E74C3C", "cas": "93957-54-1", "formula": "C24H26FNO4", "mw": "411.47", "smiles": "", "desc": "首个全合成他汀，吲哚母核，CYP2C9代谢（DDI较少）", "year": "1993", "gen": "", "source": "吲哚母核全合成 + 侧链引入"}, {"id": "DRUG_Atorvastatin", "label": "阿托伐他汀", "title": "Atorvastatin", "type": "Drug", "color": "#E74C3C", "cas": "134523-00-5", "formula": "C33H35FN2O5", "mw": "558.64", "smiles": "CC(C)C1=C(C(=C(C2=CC=C(C=C2)F)C3=CC=CC=C3)N1CC[C@@H](O)C[C@@H](O)CC(=O)O)C(=O)NC4=CC=CC=C4", "desc": "史上最畅销药物(Lipitor)，吡咯母核，CYP3A4代谢，LDL-C降幅>40%", "year": "1997", "gen": "", "source": "Paal-Knorr吡咯合成 + ATS-8侧链偶联"}, {"id": "DRUG_Rosuvastatin", "label": "瑞舒伐他汀", "title": "Rosuvastatin", "type": "Drug", "color": "#E74C3C", "cas": "287714-41-4", "formula": "C22H28FN3O6S", "mw": "481.54", "smiles": "CC(C)C1=NC(=C(C=N1)C=CC(CC(CC(=O)O)O)O)C2=CC=C(C=C2)F", "desc": "最强降脂他汀(Crestor)，嘧啶母核+甲磺酰胺基，LDL-C降幅>50%", "year": "2003", "gen": "", "source": "嘧啶醛核心 + Wittig烯烃化 + 手性还原"}, {"id": "DRUG_Pitavastatin", "label": "匹伐他汀", "title": "Pitavastatin", "type": "Drug", "color": "#E74C3C", "cas": "147511-69-1", "formula": "C25H24FNO4", "mw": "421.46", "smiles": "", "desc": "喹啉母核，CYP代谢少，药物相互作用风险低", "year": "2003", "gen": "", "source": "喹啉醛核心 + Wittig-Horner + 手性还原"}];
+const linksData=[{"source": "DRUG_Mevastatin", "target": "GEN_S1", "relationship": "BELONGS_TO_GENERATION", "color": "#95A5A6", "detail": ""}, {"source": "DRUG_Lovastatin", "target": "GEN_S1", "relationship": "BELONGS_TO_GENERATION", "color": "#95A5A6", "detail": ""}, {"source": "DRUG_Pravastatin", "target": "GEN_S1", "relationship": "BELONGS_TO_GENERATION", "color": "#95A5A6", "detail": ""}, {"source": "DRUG_Simvastatin", "target": "GEN_S1", "relationship": "BELONGS_TO_GENERATION", "color": "#95A5A6", "detail": ""}, {"source": "DRUG_Fluvastatin", "target": "GEN_S2", "relationship": "BELONGS_TO_GENERATION", "color": "#95A5A6", "detail": ""}, {"source": "DRUG_Atorvastatin", "target": "GEN_S3", "relationship": "BELONGS_TO_GENERATION", "color": "#95A5A6", "detail": ""}, {"source": "DRUG_Rosuvastatin", "target": "GEN_S3", "relationship": "BELONGS_TO_GENERATION", "color": "#95A5A6", "detail": ""}, {"source": "DRUG_Pitavastatin", "target": "GEN_S3", "relationship": "BELONGS_TO_GENERATION", "color": "#95A5A6", "detail": ""}, {"source": "INT_Lovastatin_Acid", "target": "DRUG_Lovastatin", "relationship": "FERMENTATION", "color": "#1ABC9C", "detail": "曲霉发酵→提取分离→内酯化→洛伐他汀"}, {"source": "INT_Mevastatin_Acid", "target": "DRUG_Mevastatin", "relationship": "FERMENTATION", "color": "#1ABC9C", "detail": "青霉发酵→提取→内酯化→美伐他汀（Compactin）"}, {"source": "DRUG_Mevastatin", "target": "DRUG_Pravastatin", "relationship": "MICROBIAL_HYDROXYLATION", "color": "#9B59B6", "detail": "Streptomyces carbophilus 微生物羟化C6位引入β-OH"}, {"source": "DRUG_Lovastatin", "target": "INT_MonacolinJ", "relationship": "HYDROLYSIS", "color": "#3498DB", "detail": "碱水解脱2-甲基丁酰侧链→Monacolin J"}, {"source": "INT_MonacolinJ", "target": "DRUG_Simvastatin", "relationship": "ACYLATION", "color": "#F39C12", "detail": "Monacolin J + 2,2-二甲基丁酰氯→辛伐他汀（C8羟基区域选择性酰化）"}, {"source": "SCA_DMBA", "target": "DRUG_Simvastatin", "relationship": "SIDE_CHAIN_OF", "color": "#F39C12", "detail": "2,2-二甲基丁酰氯作为侧链酰化试剂"}, {"source": "SCA_Diketone", "target": "DRUG_Atorvastatin", "relationship": "PAAL_KNORR_CYCLIZATION", "color": "#E67E22", "detail": "1,4-二酮+苄胺→Paal-Knorr缩合成吡咯环母核"}, {"source": "INT_ATS8", "target": "DRUG_Atorvastatin", "relationship": "SIDE_CHAIN_COUPLING", "color": "#BDC3C7", "detail": "ATS-8手性侧链→酰胺缩合→脱保护→阿托伐他汀钙"}, {"source": "INT_Rosu_Pyr", "target": "DRUG_Rosuvastatin", "relationship": "WITTIG", "color": "#8E44AD", "detail": "嘧啶醛+磷叶立德→Wittig烯烃化→手性还原→瑞舒伐他汀钙"}, {"source": "SCA_Wittig_Ylide", "target": "DRUG_Rosuvastatin", "relationship": "WITTIG", "color": "#8E44AD", "detail": "Wittig磷叶立德引入α,β-不饱和酯侧链"}, {"source": "INT_Pitava_Quin", "target": "DRUG_Pitavastatin", "relationship": "WITTIG", "color": "#8E44AD", "detail": "喹啉醛+磷叶立德→Wittig-Horner→手性还原→匹伐他汀钙"}, {"source": "SCA_Wittig_Ylide", "target": "DRUG_Pitavastatin", "relationship": "WITTIG", "color": "#8E44AD", "detail": "Wittig磷叶立德引入α,β-不饱和酯侧链"}, {"source": "INT_ATS8", "target": "DRUG_Fluvastatin", "relationship": "TOTAL_SYNTHESIS", "color": "#BDC3C7", "detail": "吲哚母核全合成→侧链引入→氟伐他汀钠"}, {"source": "GEN_S1", "target": "GEN_S2", "relationship": "EVOLVED_TO", "color": "#2ECC71", "detail": "第2代在合成策略/降脂强度上迭代升级"}, {"source": "GEN_S2", "target": "GEN_S3", "relationship": "EVOLVED_TO", "color": "#2ECC71", "detail": "第3代在合成策略/降脂强度上迭代升级"}];
+const svg=d3.select("#graph"),W=window.innerWidth,H=window.innerHeight;
+const g=svg.append("g");
+const zoom=d3.zoom().scaleExtent([0.1,4]).on("zoom",e=>g.attr("transform",e.transform));
+svg.call(zoom);
+const sim=d3.forceSimulation(nodesData)
+ .force("link",d3.forceLink(linksData).id(d=>d.id).distance(130))
+ .force("charge",d3.forceManyBody().strength(-400))
+ .force("center",d3.forceCenter(W/2,H/2))
+ .force("collision",d3.forceCollide(30));
+const defs=svg.append("defs");
+linksData.forEach((l,i)=>{defs.append("marker").attr("id","a"+i).attr("viewBox","0 -5 10 10").attr("refX",22).attr("refY",0).attr("markerWidth",6).attr("markerHeight",6).attr("orient","auto").append("path").attr("d","M0,-5L10,0L0,5").attr("fill",l.color)});
+const link=g.append("g").selectAll("line").data(linksData).join("line")
+ .attr("stroke",d=>d.color).attr("stroke-width",1.5).attr("stroke-opacity",0.6).attr("marker-end",(d,i)=>"url(#a"+i+")");
+const node=g.append("g").selectAll("g").data(nodesData).join("g")
+ .call(d3.drag().on("start",function(e,d){if(!e.active)sim.alphaTarget(0.3).restart();d.fx=d.x;d.fy=d.y})
+  .on("drag",function(e,d){d.fx=e.x;d.fy=e.y})
+  .on("end",function(e,d){if(!e.active)sim.alphaTarget(0);d.fx=null;d.fy=null}));
+node.append("circle").attr("r",d=>d.type==="Drug"?14:d.type==="Generation"?18:d.type==="Core Intermediate"?11:8)
+ .attr("fill",d=>d.color).attr("stroke","#fff").attr("stroke-width",1.5).style("cursor","pointer")
+ .on("mouseover",function(e,d){const tt=d3.select("#tooltip");tt.classed("show",true)
+  .style("left",(e.pageX+15)+"px").style("top",(e.pageY-10)+"px")
+  .html('<div class="tt-title">'+d.label+' '+d.title+'</div><div class="tt-row"><span class="tt-label">类型</span><span>'+d.type+'</span></div>'+(d.cas?'<div class="tt-row"><span class="tt-label">CAS</span><span>'+d.cas+'</span></div>':'')+(d.formula?'<div class="tt-row"><span class="tt-label">分子式</span><span>'+d.formula+'</span></div>':'')+(d.mw?'<div class="tt-row"><span class="tt-label">分子量</span><span>'+d.mw+'</span></div>':'')+(d.year?'<div class="tt-row"><span class="tt-label">上市</span><span>'+d.year+'</span></div>':'')+(d.source?'<div class="tt-row"><span class="tt-label">来源</span><span>'+d.source+'</span></div>':'')+(d.desc?'<div style="margin-top:6px;color:#ccc">'+d.desc+'</div>':''))})
+ .on("mouseout",()=>d3.select("#tooltip").classed("show",false)).on("click",highlightConnections);
+node.append("text").text(d=>d.label).attr("font-size",d=>d.type==="Generation"?13:d.type==="Drug"?10:9)
+ .attr("font-family","Microsoft YaHei,sans-serif").attr("dx",18).attr("dy",4).attr("fill","#333").style("pointer-events","none");
+const ll=g.append("g").selectAll("text").data(linksData).join("text").text(d=>d.relationship)
+ .attr("font-size",7).attr("fill","#aaa").attr("text-anchor","middle").attr("dy",-5).style("pointer-events","none");
+sim.on("tick",()=>{link.attr("x1",d=>d.source.x).attr("y1",d=>d.source.y).attr("x2",d=>d.target.x).attr("y2",d=>d.target.y);
+ node.attr("transform",d=>`translate(${d.x},${d.y})`);
+ ll.attr("x",d=>(d.source.x+d.target.x)/2).attr("y",d=>(d.source.y+d.target.y)/2)});
+function resetZoom(){svg.transition().duration(500).call(zoom.transform,d3.zoomIdentity)}
+function filterGen(gen){if(gen==='all'){node.selectAll("circle").attr("opacity",1);node.selectAll("text").attr("opacity",1);link.attr("opacity",0.6);ll.attr("opacity",0.7)}
+else{const gid="GEN_S"+gen;const cd=new Set();linksData.forEach(l=>{if(l.target===gid)cd.add(l.source)});
+ node.selectAll("circle").attr("opacity",d=>cd.has(d.id)?1:d.id===gid?1:0.12);
+ node.selectAll("text").attr("opacity",d=>cd.has(d.id)?1:d.id===gid?1:0.12);
+ link.attr("opacity",0.12);ll.attr("opacity",0.12)}}
+function filterIntermediates(){node.selectAll("circle").attr("opacity",d=>d.type==="Core Intermediate"?1:0.12);
+ node.selectAll("text").attr("opacity",d=>d.type==="Core Intermediate"?1:0.12);
+ link.attr("opacity",0.12);ll.attr("opacity",0.12)}
+svg.on("click",resetHighlight);</script></body></html>

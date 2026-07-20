@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>KG Editor · 知识图谱元数据编辑器</title>
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:"Microsoft YaHei",sans-serif;background:#f8fafc;color:#1e293b;display:flex;flex-direction:column;height:100vh}
+header{background:linear-gradient(135deg,#1e293b,#334155);color:white;padding:12px 24px;display:flex;align-items:center;gap:20px;flex-shrink:0}
+header h1{font-size:1.1rem}
+header select,header button{padding:6px 12px;border-radius:6px;border:1px solid #64748b;background:#334155;color:white;cursor:pointer;font-size:0.82rem}
+header button.primary{background:#3b82f6;border-color:#3b82f6}
+header button.success{background:#10b981;border-color:#10b981}
+header button.warn{background:#f59e0b;border-color:#f59e0b;color:#1e293b}
+.toolbar{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.main{display:flex;flex:1;overflow:hidden}
+.editor-panel{flex:1;display:flex;flex-direction:column;overflow:hidden;border-right:2px solid #e2e8f0}
+.graph-panel{flex:1;position:relative;background:#f1f5f9}
+.tab-bar{display:flex;background:#e2e8f0;flex-shrink:0}
+.tab-bar button{padding:8px 16px;border:none;background:transparent;cursor:pointer;font-size:0.82rem;color:#64748b;font-weight:500}
+.tab-bar button.active{background:white;color:#1e293b;border-bottom:2px solid #3b82f6}
+.table-wrap{flex:1;overflow:auto;background:white;scroll-behavior:smooth}
+table{width:100%;border-collapse:collapse;font-size:0.78rem;table-layout:auto}
+thead{position:sticky;top:0;z-index:10}
+th{background:#f1f5f9;padding:8px 6px;text-align:left;border-bottom:2px solid #cbd5e1;white-space:nowrap;font-weight:600;color:#475569;font-size:0.75rem}
+td{border-bottom:1px solid #e2e8f0;padding:4px 6px}
+tr{cursor:pointer;transition:background 0.2s}
+tr:hover{background:#f0f9ff}
+tr.highlighted{background:#dbeafe!important;box-shadow:inset 3px 0 0 #3b82f6}
+td input,td select{width:100%;border:1px solid transparent;background:transparent;padding:4px 4px;font-size:0.78rem;font-family:inherit;border-radius:3px;min-width:60px}
+td input:focus,td select:focus{outline:none;border-color:#3b82f6;background:#eff6ff}
+td input.cas{width:110px}
+td input.mw{width:70px}
+td input.formula{width:110px}
+td input.conv{width:65px}
+td input.desc{min-width:200px}
+.row-btn{background:none;border:none;cursor:pointer;color:#94a3b8;font-size:1rem;padding:0 4px}
+.row-btn:hover{color:#ef4444}
+.status{font-size:0.7rem;color:#94a3b8;padding:4px 12px;background:#f1f5f9;flex-shrink:0;display:flex;gap:12px;align-items:center}
+.info-overlay{position:absolute;top:10px;right:10px;background:rgba(255,255,255,0.9);padding:10px 14px;border-radius:8px;font-size:0.75rem;color:#475569;box-shadow:0 1px 4px rgba(0,0,0,0.1);pointer-events:none}
+.tooltip{position:absolute;background:rgba(30,41,59,0.9);color:white;padding:8px 12px;border-radius:6px;font-size:0.75rem;pointer-events:none;opacity:0;z-index:50;max-width:300px}
+.tooltip.show{opacity:1}
+@keyframes pulse{0%,100%{r:10}50%{r:20}}
+.pulse-node{animation:pulse 0.8s ease-in-out 3}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🧬 KG Editor · 知识图谱元数据编辑器</h1>
+  <select id="graphSelect" onchange="loadGraph()">
+    <option value="statin">💊 他汀类</option>
+    <option value="cephalosporin">🧬 头孢菌素</option>
+    <option value="arb">💗 ARB沙坦类</option>
+    <option value="carbapenem">🦠 培南类</option>
+  </select>
+  <button class="primary" onclick="refreshGraph()">🔄 刷新图谱</button>
+  <button class="success" onclick="downloadCSV()">💾 下载CSV</button>
+  <button class="warn" onclick="addRow()">➕ 添加节点</button>
+  <small style="color:#94a3b8;margin-left:auto">💡 点击图谱节点 → 定位编辑行 · 点击表格行 → 高亮节点</small>
+</header>
+
+<div class="main">
+  <div class="editor-panel">
+    <div class="tab-bar">
+      <button id="tabEntities" class="active" onclick="switchTab('entities')">📋 实体节点</button>
+      <button id="tabRelations" onclick="switchTab('relationships')">🔗 合成关系</button>
+      <span style="margin-left:auto;padding:8px 12px;font-size:0.75rem;color:#64748b" id="tabCount"></span>
+    </div>
+    <div class="table-wrap" id="tableContainer"></div>
+    <div class="status"><span id="statusBar">就绪</span><span id="highlightedNode" style="color:#3b82f6;display:none"></span></div>
+  </div>
+  <div class="graph-panel" id="graphPanel">
+    <svg id="graph-svg"></svg>
+    <div class="info-overlay" id="graphInfo"></div>
+    <div class="tooltip" id="graphTooltip"></div>
+  </div>
+</div>
+
+<script>
+let currentGraph = 'statin', currentTab = 'entities';
+let nodesData = [], linksData = [];
+let lastHighlightedId = null;
+
+function parseCSV(text) {
+  const lines = text.trim().split('\n');
+  if (lines.length < 2) return [];
+  const headers = lines[0].replace(/^\uFEFF/,'').split(',').map(h=>h.trim());
+  return lines.slice(1).map(line => {
+    const vals = []; let current='', inQuote=false;
+    for (const ch of line) {
+      if (ch==='"') { inQuote=!inQuote; continue; }
+      if (ch===',' && !inQuote) { vals.push(current.trim()); current=''; continue; }
+      current += ch;
+    }
+    vals.push(current.trim());
+    const row = {};
+    headers.forEach((h,j)=> row[h] = vals[j]||'');
+    row._parsed = parseDesc(row.description || '');
+    return row;
+  });
+}
+
+function parseDesc(d) {
+  if (!d) return {};
+  const o={};
+  d.split('; ').forEach(p=>{const i=p.indexOf(':');if(i>0)o[p.substring(0,i).trim()]=p.substring(i+1).trim()});
+  return o;
+}
+
+function buildDesc(p) {
+  return Object.entries(p).filter(([,v])=>v!==''&&v!=null).map(([k,v])=>`${k}: ${v}`).join('; ');
+}
+
+async function fetchCSV(url) {
+  const r = await fetch(url);
+  if (!r.ok) throw new Error(`Failed: ${url}`);
+  return await r.text();
+}
+
+async function loadGraph() {
+  currentGraph = document.getElementById('graphSelect').value;
+  try {
+    const [et,rt] = await Promise.all([
+      fetchCSV(`https://raw.githubusercontent.com/songjen/APIs/main/${currentGraph}_entities.csv`),
+      fetchCSV(`https://raw.githubusercontent.com/songjen/APIs/main/${currentGraph}_relationships.csv`)
+    ]);
+    nodesData = parseCSV(et);
+    linksData = parseCSV(rt).map(r=>({source:r.source,target:r.target,relationship:r.description||''}));
+    currentTab = 'entities';
+    lastHighlightedId = null;
+    document.getElementById('highlightedNode').style.display = 'none';
+    renderTable();
+    refreshGraph();
+  } catch(e) {
+    document.getElementById('statusBar').textContent = `加载失败: ${e.message}`;
+  }
+}
+
+function esc(s) { return (s||'').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
+function typeOpts(cur) {
+  return ['KSM','DI','API','Drug','Generation','Core Intermediate','Side Chain / Reagent','Starting Material']
+    .map(t => `<option value="${t}" ${t===cur?'selected':''}>${t}</option>`).join('');
+}
+
+// ═══ Highlight & Scroll ═══
+function highlightRow(nodeId) {
+  if (currentTab !== 'entities') switchTab('entities');
+  setTimeout(() => {
+    document.querySelectorAll('tr.highlighted').forEach(r => r.classList.remove('highlighted'));
+    const row = document.getElementById('row-' + nodeId);
+    if (row) {
+      row.classList.add('highlighted');
+      row.scrollIntoView({behavior:'smooth',block:'center'});
+      lastHighlightedId = nodeId;
+      const node = nodesData.find(n => n.id === nodeId);
+      document.getElementById('highlightedNode').style.display = 'inline';
+      document.getElementById('highlightedNode').textContent = '📍 定位: ' + (node?.title || nodeId);
+      document.getElementById('statusBar').textContent = `已定位到 ${nodeId}，可直接编辑`;
+    }
+  }, 100);
+}
+
+function highlightGraphNode(nodeId) {
+  if (!graphSVG) return;
+  const circles = graphSVG.selectAll('circle');
+  circles.each(function(d) {
+    if (d.id === nodeId) {
+      const el = d3.select(this);
+      const origR = el.attr('r');
+      el.classed('pulse-node', true)
+        .transition().duration(200).attr('r', origR*1.5)
+        .transition().duration(600).attr('r', origR);
+      setTimeout(() => el.classed('pulse-node', false), 1500);
+    }
+  });
+}
+
+// ═══ Render Table ═══
+function renderTable() {
+  const container = document.getElementById('tableContainer');
+  document.getElementById('tabEntities').classList.toggle('active', currentTab==='entities');
+  document.getElementById('tabRelations').classList.toggle('active', currentTab==='relationships');
+  document.getElementById('tabCount').textContent = `共 ${currentTab==='entities'?nodesData.length:linksData.length} 条`;
+
+  if (currentTab === 'entities') {
+    const cols = ['id','title','type','cas','formula','mw','conversion','desc','year','source'];
+    let h = '<table><thead><tr><th></th>';
+    cols.forEach(c => h += `<th>${c}</th>`);
+    h += '</tr></thead><tbody>';
+    nodesData.forEach((row,i) => {
+      const rid = 'row-' + row.id;
+      h += `<tr id="${rid}" onclick="if(event.target.tagName!=='INPUT'&&event.target.tagName!=='SELECT'&&event.target.tagName!=='BUTTON'){highlightGraphNode('${row.id}')}">`;
+      h += `<td><button class="row-btn" onclick="event.stopPropagation();deleteNode(${i})" title="删除">✕</button></td>`;
+      h += `<td><input value="${esc(row.id)}" onchange="updateNode(${i},'id',this.value)"></td>`;
+      h += `<td><input value="${esc(row.title)}" onchange="updateNode(${i},'title',this.value)"></td>`;
+      h += `<td><select onchange="updateNode(${i},'type',this.value)">${typeOpts(row.type)}</select></td>`;
+      h += `<td><input class="cas" value="${esc(row._parsed.cas||'')}" onchange="updateNodeAttr(${i},'cas',this.value)"></td>`;
+      h += `<td><input class="formula" value="${esc(row._parsed.formula||'')}" onchange="updateNodeAttr(${i},'formula',this.value)"></td>`;
+      h += `<td><input class="mw" value="${esc(row._parsed.mw||'')}" onchange="updateNodeAttr(${i},'mw',this.value)"></td>`;
+      h += `<td><input class="conv" value="${esc(row._parsed.conversion||'')}" onchange="updateNodeAttr(${i},'conversion',this.value)"></td>`;
+      h += `<td><input class="desc" value="${esc(row._parsed.desc||'')}" onchange="updateNodeAttr(${i},'desc',this.value)"></td>`;
+      h += `<td><input value="${esc(row._parsed.year||'')}" onchange="updateNodeAttr(${i},'year',this.value)" style="width:50px"></td>`;
+      h += `<td><input value="${esc(row._parsed.source||'')}" onchange="updateNodeAttr(${i},'source',this.value)" style="min-width:120px"></td>`;
+      h += '</tr>';
+    });
+    h += '</tbody></table>';
+    container.innerHTML = h;
+    // Restore highlight after re-render if editing
+    if (lastHighlightedId) {
+      const row = document.getElementById('row-' + lastHighlightedId);
+      if (row) row.classList.add('highlighted');
+    }
+  } else {
+    const cols = ['source','target','relationship','conv','method'];
+    let h = '<table><thead><tr><th></th>';
+    cols.forEach(c => h += `<th>${c}</th>`);
+    h += '</tr></thead><tbody>';
+    linksData.forEach((row,i) => {
+      h += `<tr onclick="if(event.target.tagName!=='INPUT'&&event.target.tagName!=='SELECT'&&event.target.tagName!=='BUTTON'){highlightRow(row.source||row.target)}">`;
+      h += `<td><button class="row-btn" onclick="event.stopPropagation();deleteEdge(${i})" title="删除">✕</button></td>`;
+      h += `<td><input value="${esc(row.source)}" onchange="updateEdge(${i},'source',this.value)"></td>`;
+      h += `<td><input value="${esc(row.target)}" onchange="updateEdge(${i},'target',this.value)"></td>`;
+      const desc = row.relationship || '';
+      h += `<td><input value="${esc(desc)}" onchange="updateEdge(${i},'relationship',this.value)" style="min-width:200px"></td>`;
+      const cm = desc.match(/yield_pct:\s*([^;]*)/);
+      const mm = desc.match(/relationship:\s*(\w+)/);
+      h += `<td><input class="conv" value="${esc(cm?cm[1]:'')}" onchange="updateEdgeAttr(${i},'yield_pct',this.value)"></td>`;
+      h += `<td><input value="${esc(mm?mm[1]:'')}" onchange="updateEdgeAttr(${i},'relationship',this.value)" style="width:120px"></td>`;
+      h += '</tr>';
+    });
+    h += '</tbody></table>';
+    container.innerHTML = h;
+  }
+}
+
+function updateNode(i,f,v) { nodesData[i][f]=v; refreshGraphDebounced(); }
+function updateNodeAttr(i,k,v) {
+  nodesData[i]._parsed[k]=v;
+  nodesData[i].description=buildDesc(nodesData[i]._parsed);
+  refreshGraphDebounced();
+}
+function updateEdge(i,f,v) { linksData[i][f]=v; refreshGraphDebounced(); }
+function updateEdgeAttr(i,k,v) {
+  const d=linksData[i].relationship||`relationship: PRODUCES`;
+  const parts=d.split('; ').filter(p=>!p.startsWith(k+':'));
+  if(v) parts.push(`${k}: ${v}`);
+  linksData[i].relationship=parts.join('; ');
+  refreshGraphDebounced();
+}
+function addRow() {
+  if(currentTab==='entities'){
+    nodesData.push({id:'NEW_'+Date.now(),title:'New',type:'DI',_parsed:{},description:''});
+    renderTable();
+  }else{
+    linksData.push({source:'',target:'',relationship:'relationship: PRODUCES'});renderTable();
+  }
+}
+function deleteNode(i){if(confirm('删除: '+nodesData[i].title+'?')){nodesData.splice(i,1);renderTable();refreshGraph();}}
+function deleteEdge(i){linksData.splice(i,1);renderTable();refreshGraph();}
+function switchTab(tab){currentTab=tab;renderTable();}
+
+let refreshTimer;
+function refreshGraphDebounced(){clearTimeout(refreshTimer);refreshTimer=setTimeout(refreshGraph,800);}
+function refreshGraph(){clearTimeout(refreshTimer);renderGraph();}
+
+// ═══ D3 Graph with click-to-edit ═══
+function renderGraph() {
+  const svgEl = document.getElementById('graph-svg');
+  svgEl.innerHTML = '';
+  const panel = document.getElementById('graphPanel');
+  const W = panel.clientWidth, H = panel.clientHeight;
+  const svg = d3.select('#graph-svg').attr('viewBox',`0 0 ${W} ${H}`);
+  graphSVG = svg;
+  const g = svg.append('g');
+  svg.call(d3.zoom().scaleExtent([0.1,4]).on('zoom',e=>g.attr('transform',e.transform)));
+
+  const d3nodes = nodesData.map(n=>({
+    id:n.id, label:n.title, title:n.title, type:n.type,
+    cas:n._parsed?.cas||'', formula:n._parsed?.formula||'', mw:n._parsed?.mw||'',
+    conversion:n._parsed?.conversion||'', desc:n._parsed?.desc||'',
+    color:n.type==='API'||n.type==='Drug'?'#E74C3C':n.type==='DI'||n.type==='Core Intermediate'?'#3498DB':n.type==='KSM'||n.type==='Starting Material'?'#9B59B6':'#95A5A6',
+    r:n.type==='API'||n.type==='Drug'?14:n.type==='Generation'?18:10,
+  }));
+  const d3links = linksData.filter(l=>l.source&&l.target).map(l=>({source:l.source,target:l.target}));
+
+  document.getElementById('graphInfo').innerHTML = `节点:<b>${d3nodes.length}</b> 边:<b>${d3links.length}</b>`;
+
+  if(!d3nodes.length) return;
+  const sim = d3.forceSimulation(d3nodes)
+    .force('link',d3.forceLink(d3links).id(d=>d.id).distance(100))
+    .force('charge',d3.forceManyBody().strength(-400))
+    .force('center',d3.forceCenter(W/2,H/2))
+    .force('collision',d3.forceCollide(30));
+
+  const link = g.append('g').selectAll('line').data(d3links).join('line')
+    .attr('stroke','#bdc3c7').attr('stroke-width',1.2).attr('stroke-opacity',0.5);
+
+  const node = g.append('g').selectAll('g').data(d3nodes).join('g')
+    .call(d3.drag().on('start',(e,d)=>{if(!e.active)sim.alphaTarget(0.3).restart();d.fx=d.x;d.fy=d.y})
+      .on('drag',(e,d)=>{d.fx=e.x;d.fy=e.y}).on('end',(e,d)=>{if(!e.active)sim.alphaTarget(0);d.fx=null;d.fy=null}));
+
+  // ⭐ Click node → highlight table row
+  node.append('circle').attr('r',d=>d.r).attr('fill',d=>d.color)
+    .attr('stroke','white').attr('stroke-width',1.5).style('cursor','pointer')
+    .on('click', (event, d) => { event.stopPropagation(); highlightRow(d.id); })
+    .on('mouseover', (event, d) => {
+      const tt = d3.select('#graphTooltip');
+      tt.classed('show',true).style('left',(event.pageX+15)+'px').style('top',(event.pageY-10)+'px')
+        .html(`<b>${d.label}</b><br>类型: ${d.type}${d.cas?'<br>CAS: '+d.cas:''}${d.formula?'<br>分子式: '+d.formula:''}${d.mw?'<br>分子量: '+d.mw:''}${d.conversion?'<br>转化率: '+d.conversion:''}`);
+    })
+    .on('mouseout', () => d3.select('#graphTooltip').classed('show',false));
+
+  node.append('text').text(d=>d.label).attr('font-size',9).attr('dx',16).attr('dy',4).attr('fill','#333').style('pointer-events','none');
+
+  sim.on('tick',()=>{
+    link.attr('x1',d=>d.source.x).attr('y1',d=>d.source.y).attr('x2',d=>d.target.x).attr('y2',d=>d.target.y);
+    node.attr('transform',d=>`translate(${d.x},${d.y})`);
+  });
+}
+
+// ═══ Download ═══
+function downloadCSV() {
+  let e='id,title,type,description,human_readable_id,text_unit_ids,degree,frequency\n';
+  nodesData.forEach(n=>{e+=`${n.id},${n.title},${n.type},"${(n.description||'').replace(/"/g,'""')}",${n.id},,0,1\n`});
+  let r='source,target,id,description,weight,human_readable_id,text_unit_ids,combined_degree\n';
+  linksData.forEach((l,i)=>{r+=`${l.source},${l.target},REL_${String(i).padStart(4,'0')},"${(l.relationship||'').replace(/"/g,'""')}",1.0,REL_${String(i).padStart(4,'0')},,2\n`});
+  download('\uFEFF'+e,`${currentGraph}_entities.csv`);
+  setTimeout(()=>download('\uFEFF'+r,`${currentGraph}_relationships.csv`),300);
+}
+function download(content,filename){
+  const b=new Blob([content],{type:'text/csv'}),a=document.createElement('a');
+  a.href=URL.createObjectURL(b);a.download=filename;a.click();
+}
+
+loadGraph();
+</script>
+</body>
+</html>

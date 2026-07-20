@@ -1,0 +1,65 @@
+﻿source,target,id,description,weight,human_readable_id,text_unit_ids,combined_degree
+DRUG_Cephalothin,GEN_1,REL_0000,relationship: BELONGS_TO_GENERATION; generation: 1,1.0,REL_0000,,2
+DRUG_Cephaloridine,GEN_1,REL_0001,relationship: BELONGS_TO_GENERATION; generation: 1,1.0,REL_0001,,2
+DRUG_Cephalexin,GEN_1,REL_0002,relationship: BELONGS_TO_GENERATION; generation: 1,1.0,REL_0002,,2
+DRUG_Cefazolin,GEN_1,REL_0003,relationship: BELONGS_TO_GENERATION; generation: 1,1.0,REL_0003,,2
+DRUG_Cefadroxil,GEN_1,REL_0004,relationship: BELONGS_TO_GENERATION; generation: 1,1.0,REL_0004,,2
+DRUG_Cephradine,GEN_1,REL_0005,relationship: BELONGS_TO_GENERATION; generation: 1,1.0,REL_0005,,2
+DRUG_Cefamandole,GEN_2,REL_0006,relationship: BELONGS_TO_GENERATION; generation: 2,1.0,REL_0006,,2
+DRUG_Cefuroxime,GEN_2,REL_0007,relationship: BELONGS_TO_GENERATION; generation: 2,1.0,REL_0007,,2
+DRUG_Cefoxitin,GEN_2,REL_0008,relationship: BELONGS_TO_GENERATION; generation: 2,1.0,REL_0008,,2
+DRUG_Cefaclor,GEN_2,REL_0009,relationship: BELONGS_TO_GENERATION; generation: 2,1.0,REL_0009,,2
+DRUG_Cefprozil,GEN_2,REL_0010,relationship: BELONGS_TO_GENERATION; generation: 2,1.0,REL_0010,,2
+DRUG_Cefovecin,GEN_2,REL_0011,relationship: BELONGS_TO_GENERATION; generation: 2,1.0,REL_0011,,2
+DRUG_Cefotaxime,GEN_3,REL_0012,relationship: BELONGS_TO_GENERATION; generation: 3,1.0,REL_0012,,2
+DRUG_Ceftizoxime,GEN_3,REL_0013,relationship: BELONGS_TO_GENERATION; generation: 3,1.0,REL_0013,,2
+DRUG_Ceftriaxone,GEN_3,REL_0014,relationship: BELONGS_TO_GENERATION; generation: 3,1.0,REL_0014,,2
+DRUG_Ceftazidime,GEN_3,REL_0015,relationship: BELONGS_TO_GENERATION; generation: 3,1.0,REL_0015,,2
+DRUG_Cefoperazone,GEN_3,REL_0016,relationship: BELONGS_TO_GENERATION; generation: 3,1.0,REL_0016,,2
+DRUG_Cefixime,GEN_3,REL_0017,relationship: BELONGS_TO_GENERATION; generation: 3,1.0,REL_0017,,2
+DRUG_Cefpodoxime,GEN_3,REL_0018,relationship: BELONGS_TO_GENERATION; generation: 3,1.0,REL_0018,,2
+DRUG_Cefdinir,GEN_3,REL_0019,relationship: BELONGS_TO_GENERATION; generation: 3,1.0,REL_0019,,2
+DRUG_Ceftibuten,GEN_3,REL_0020,relationship: BELONGS_TO_GENERATION; generation: 3,1.0,REL_0020,,2
+DRUG_Cefepime,GEN_4,REL_0021,relationship: BELONGS_TO_GENERATION; generation: 4,1.0,REL_0021,,2
+DRUG_Cefpirome,GEN_4,REL_0022,relationship: BELONGS_TO_GENERATION; generation: 4,1.0,REL_0022,,2
+DRUG_Ceftaroline,GEN_5,REL_0023,relationship: BELONGS_TO_GENERATION; generation: 5,1.0,REL_0023,,2
+DRUG_Ceftobiprole,GEN_5,REL_0024,relationship: BELONGS_TO_GENERATION; generation: 5,1.0,REL_0024,,2
+INT_CephC,INT_7-ACA,REL_0025,relationship: ENZYMATIC_CLEAVAGE; description: D-氨基酸氧化酶+戊二酰酰基转移酶两步酶解,1.0,REL_0025,,2
+INT_PenG,INT_7-ADCA,REL_0026,relationship: RING_EXPANSION; description: 青霉素亚砜扩环重排→脱侧链,1.0,REL_0026,,2
+INT_7-ACA,INT_7-ADCA,REL_0027,relationship: HYDROGENOLYSIS; description: 催化氢解脱3-乙酰氧基,1.0,REL_0027,,2
+INT_PenG,INT_7-ACCA,REL_0028,relationship: RING_EXPANSION_CHLORINATION; description: 青霉素工业盐→亚砜酯→扩环重排→C3氯代→脱侧链→7-ACCA,1.0,REL_0028,,2
+INT_PenG,INT_GCLE,REL_0029,relationship: RING_EXPANSION_CHLORINATION; description: 氧化成亚砜→扩环重排→PMB酯化→C3氯代,1.0,REL_0029,,2
+INT_7-ADCA,DRUG_Cephalexin,REL_0030,relationship: SYNTHESIZED_FROM; reaction_type: 酰胺化缩合; detail: Dane盐法/DCC+HOBt,1.0,REL_0030,,2
+SCA_Phenylglycine,DRUG_Cephalexin,REL_0031,relationship: SIDE_CHAIN_OF; reaction_type: 酰胺化缩合,1.0,REL_0031,,2
+INT_7-ADCA,DRUG_Cefadroxil,REL_0032,relationship: SYNTHESIZED_FROM; reaction_type: 酰胺化缩合; detail: 活性酯法,1.0,REL_0032,,2
+SCA_DHPC,DRUG_Cefadroxil,REL_0033,relationship: SIDE_CHAIN_OF; reaction_type: 酰胺化缩合,1.0,REL_0033,,2
+INT_7-ACA,DRUG_Cefazolin,REL_0034,relationship: SYNTHESIZED_FROM; reaction_type: 酰胺化+亲核取代; detail: C3位噻二唑硫醇取代+7位四氮唑乙酸酰化,1.0,REL_0034,,2
+SCA_Tetrazole,DRUG_Cefazolin,REL_0035,relationship: SIDE_CHAIN_OF; reaction_type: 酰胺化+亲核取代,1.0,REL_0035,,2
+INT_7-ACA,DRUG_Cefamandole,REL_0036,relationship: SYNTHESIZED_FROM; reaction_type: 酰胺化缩合; detail: O-甲酰扁桃酸活性酯,1.0,REL_0036,,2
+SCA_Mandelic,DRUG_Cefamandole,REL_0037,relationship: SIDE_CHAIN_OF; reaction_type: 酰胺化缩合,1.0,REL_0037,,2
+INT_7-ACCA,DRUG_Cefaclor,REL_0038,relationship: SYNTHESIZED_FROM; reaction_type: 酰胺化缩合; detail: 7-ACCA + D-苯甘氨酸 → 活性酯缩合 → 头孢克洛,1.0,REL_0038,,2
+SCA_Phenylglycine,DRUG_Cefaclor,REL_0039,relationship: SIDE_CHAIN_OF; reaction_type: 酰胺化缩合,1.0,REL_0039,,2
+INT_7-ACCA,DRUG_Cefovecin,REL_0040,relationship: SYNTHESIZED_FROM; reaction_type: 酰胺化缩合; detail: 7-ACCA + 氨噻肟酸衍生物 → 活性酯缩合 → 头孢维星钠,1.0,REL_0040,,2
+SCA_Thiazole,DRUG_Cefovecin,REL_0041,relationship: SIDE_CHAIN_OF; reaction_type: 酰胺化缩合,1.0,REL_0041,,2
+INT_7-ADCA,DRUG_Cefprozil,REL_0042,relationship: SYNTHESIZED_FROM; reaction_type: 酰胺化缩合; detail: Dane盐法,1.0,REL_0042,,2
+SCA_DHPC,DRUG_Cefprozil,REL_0043,relationship: SIDE_CHAIN_OF; reaction_type: 酰胺化缩合,1.0,REL_0043,,2
+INT_7-ACA,DRUG_Cefotaxime,REL_0044,relationship: SYNTHESIZED_FROM; reaction_type: 7-ACT法; detail: 氨噻肟酸活性酯+7-ACA→7-ACT→C3亲核取代,1.0,REL_0044,,2
+SCA_Thiazole,DRUG_Cefotaxime,REL_0045,relationship: SIDE_CHAIN_OF; reaction_type: 7-ACT法,1.0,REL_0045,,2
+INT_7-ACA,DRUG_Ceftriaxone,REL_0046,relationship: SYNTHESIZED_FROM; reaction_type: 7-ACT法; detail: C3引入三嗪二酮环（独特结构）,1.0,REL_0046,,2
+SCA_Thiazole,DRUG_Ceftriaxone,REL_0047,relationship: SIDE_CHAIN_OF; reaction_type: 7-ACT法,1.0,REL_0047,,2
+INT_7-ACA,DRUG_Ceftazidime,REL_0048,relationship: SYNTHESIZED_FROM; reaction_type: 活性酯法; detail: C3吡啶鎓取代（抗假单胞菌关键）,1.0,REL_0048,,2
+SCA_Thiazole,DRUG_Ceftazidime,REL_0049,relationship: SIDE_CHAIN_OF; reaction_type: 活性酯法,1.0,REL_0049,,2
+INT_GCLE,DRUG_Cefixime,REL_0050,relationship: SYNTHESIZED_FROM; reaction_type: 活性酯法; detail: 氨噻肟酸侧链+C3乙烯基引入,1.0,REL_0050,,2
+SCA_ATMA,DRUG_Cefixime,REL_0051,relationship: SIDE_CHAIN_OF; reaction_type: 活性酯法,1.0,REL_0051,,2
+INT_GCLE,DRUG_Cefdinir,REL_0052,relationship: SYNTHESIZED_FROM; reaction_type: 活性酯法; detail: 氨噻肟酸侧链+C3乙烯基→噻唑环,1.0,REL_0052,,2
+SCA_ATMA,DRUG_Cefdinir,REL_0053,relationship: SIDE_CHAIN_OF; reaction_type: 活性酯法,1.0,REL_0053,,2
+INT_GCLE,DRUG_Cefpodoxime,REL_0054,relationship: SYNTHESIZED_FROM; reaction_type: 活性酯法; detail: 前药酯化（proxetil）,1.0,REL_0054,,2
+SCA_ATMA,DRUG_Cefpodoxime,REL_0055,relationship: SIDE_CHAIN_OF; reaction_type: 活性酯法,1.0,REL_0055,,2
+INT_7-ACA,DRUG_Cefepime,REL_0056,relationship: SYNTHESIZED_FROM; reaction_type: 活性酯法; detail: C3 N-甲基吡咯烷取代（两性离子）,1.0,REL_0056,,2
+SCA_Thiazole,DRUG_Cefepime,REL_0057,relationship: SIDE_CHAIN_OF; reaction_type: 活性酯法,1.0,REL_0057,,2
+INT_7-ACA,DRUG_Cefpirome,REL_0058,relationship: SYNTHESIZED_FROM; reaction_type: 活性酯法; detail: C3 环戊烯并吡啶取代,1.0,REL_0058,,2
+SCA_Thiazole,DRUG_Cefpirome,REL_0059,relationship: SIDE_CHAIN_OF; reaction_type: 活性酯法,1.0,REL_0059,,2
+GEN_1,GEN_2,REL_0060,relationship: EVOLVED_TO; description: 第2代在G-谱/β-内酰胺酶稳定性上迭代升级,1.0,REL_0060,,2
+GEN_2,GEN_3,REL_0061,relationship: EVOLVED_TO; description: 第3代在G-谱/β-内酰胺酶稳定性上迭代升级,1.0,REL_0061,,2
+GEN_3,GEN_4,REL_0062,relationship: EVOLVED_TO; description: 第4代在G-谱/β-内酰胺酶稳定性上迭代升级,1.0,REL_0062,,2
+GEN_4,GEN_5,REL_0063,relationship: EVOLVED_TO; description: 第5代在G-谱/β-内酰胺酶稳定性上迭代升级,1.0,REL_0063,,2

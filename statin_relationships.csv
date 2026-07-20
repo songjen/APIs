@@ -1,0 +1,24 @@
+﻿source,target,id,description,weight,human_readable_id,text_unit_ids,combined_degree
+DRUG_Mevastatin,GEN_S1,REL_0000,relationship: BELONGS_TO_GENERATION; generation: 1,1.0,REL_0000,,2
+DRUG_Lovastatin,GEN_S1,REL_0001,relationship: BELONGS_TO_GENERATION; generation: 1,1.0,REL_0001,,2
+DRUG_Pravastatin,GEN_S1,REL_0002,relationship: BELONGS_TO_GENERATION; generation: 1,1.0,REL_0002,,2
+DRUG_Simvastatin,GEN_S1,REL_0003,relationship: BELONGS_TO_GENERATION; generation: 1,1.0,REL_0003,,2
+DRUG_Fluvastatin,GEN_S2,REL_0004,relationship: BELONGS_TO_GENERATION; generation: 2,1.0,REL_0004,,2
+DRUG_Atorvastatin,GEN_S3,REL_0005,relationship: BELONGS_TO_GENERATION; generation: 3,1.0,REL_0005,,2
+DRUG_Rosuvastatin,GEN_S3,REL_0006,relationship: BELONGS_TO_GENERATION; generation: 3,1.0,REL_0006,,2
+DRUG_Pitavastatin,GEN_S3,REL_0007,relationship: BELONGS_TO_GENERATION; generation: 3,1.0,REL_0007,,2
+INT_Lovastatin_Acid,DRUG_Lovastatin,REL_0008,relationship: FERMENTATION; description: 曲霉发酵→提取分离→内酯化→洛伐他汀,1.0,REL_0008,,2
+INT_Mevastatin_Acid,DRUG_Mevastatin,REL_0009,relationship: FERMENTATION; description: 青霉发酵→提取→内酯化→美伐他汀（Compactin）,1.0,REL_0009,,2
+DRUG_Mevastatin,DRUG_Pravastatin,REL_0010,relationship: MICROBIAL_HYDROXYLATION; description: Streptomyces carbophilus 微生物羟化C6位引入β-OH; yield_pct: ~60%,1.0,REL_0010,,2
+DRUG_Lovastatin,INT_MonacolinJ,REL_0011,relationship: HYDROLYSIS; description: 碱水解脱2-甲基丁酰侧链→Monacolin J; yield_pct: ~85%,1.0,REL_0011,,2
+INT_MonacolinJ,DRUG_Simvastatin,REL_0012,"relationship: ACYLATION; description: Monacolin J + 2,2-二甲基丁酰氯→辛伐他汀（C8羟基区域选择性酰化）; yield_pct: ~75%",1.0,REL_0012,,2
+SCA_DMBA,DRUG_Simvastatin,REL_0013,"relationship: SIDE_CHAIN_OF; description: 2,2-二甲基丁酰氯作为侧链酰化试剂",1.0,REL_0013,,2
+SCA_Diketone,DRUG_Atorvastatin,REL_0014,"relationship: PAAL_KNORR_CYCLIZATION; description: 1,4-二酮+苄胺→Paal-Knorr缩合成吡咯环母核",1.0,REL_0014,,2
+INT_ATS8,DRUG_Atorvastatin,REL_0015,relationship: SIDE_CHAIN_COUPLING; description: ATS-8手性侧链→酰胺缩合→脱保护→阿托伐他汀钙,1.0,REL_0015,,2
+INT_Rosu_Pyr,DRUG_Rosuvastatin,REL_0016,relationship: WITTIG; description: 嘧啶醛+磷叶立德→Wittig烯烃化→手性还原→瑞舒伐他汀钙,1.0,REL_0016,,2
+SCA_Wittig_Ylide,DRUG_Rosuvastatin,REL_0017,"relationship: WITTIG; description: Wittig磷叶立德引入α,β-不饱和酯侧链",1.0,REL_0017,,2
+INT_Pitava_Quin,DRUG_Pitavastatin,REL_0018,relationship: WITTIG; description: 喹啉醛+磷叶立德→Wittig-Horner→手性还原→匹伐他汀钙,1.0,REL_0018,,2
+SCA_Wittig_Ylide,DRUG_Pitavastatin,REL_0019,"relationship: WITTIG; description: Wittig磷叶立德引入α,β-不饱和酯侧链",1.0,REL_0019,,2
+INT_ATS8,DRUG_Fluvastatin,REL_0020,relationship: TOTAL_SYNTHESIS; description: 吲哚母核全合成→侧链引入→氟伐他汀钠,1.0,REL_0020,,2
+GEN_S1,GEN_S2,REL_0021,relationship: EVOLVED_TO; description: 第2代在合成策略/降脂强度上迭代升级,1.0,REL_0021,,2
+GEN_S2,GEN_S3,REL_0022,relationship: EVOLVED_TO; description: 第3代在合成策略/降脂强度上迭代升级,1.0,REL_0022,,2
